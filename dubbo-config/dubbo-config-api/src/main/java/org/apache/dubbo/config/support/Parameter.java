@@ -29,17 +29,40 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Parameter {
-
+    /**
+     * 参数别名
+     * @return
+     */
     String key() default "";
 
+    /**
+     * 是否必填
+     * @return
+     */
     boolean required() default false;
 
+    /**
+     * 是否忽略
+     * @return
+     */
     boolean excluded() default false;
 
+    /**
+     * 是否转义
+     * @return
+     */
     boolean escaped() default false;
 
+    /**
+     *
+     * @return
+     */
     boolean attribute() default false;
 
+    /**
+     *
+     * @return
+     */
     boolean append() default false;
 
 }
