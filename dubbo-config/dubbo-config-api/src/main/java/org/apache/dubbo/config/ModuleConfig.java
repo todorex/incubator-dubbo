@@ -23,32 +23,47 @@ import java.util.List;
 
 /**
  * ModuleConfig
- *
+ * 模块信息配置
  * @export
  */
 public class ModuleConfig extends AbstractConfig {
 
     private static final long serialVersionUID = 5508512956753757169L;
 
-    // module name
+    /**
+     * 当前模块名称
+     * 用于注册中心计算模块间依赖关系
+     */
     private String name;
 
-    // module version
+    /**
+     * 当前模块的版本
+     */
     private String version;
 
-    // module owner
+    /**
+     * 模块负责人
+     */
     private String owner;
 
-    // module's organization
+    /**
+     * 模块组织名称
+     */
     private String organization;
 
-    // registry centers
+    /**
+     * 注册中心
+     */
     private List<RegistryConfig> registries;
 
-    // monitor center
+    /**
+     * 监控中心
+     */
     private MonitorConfig monitor;
 
-    // if it's default
+    /**
+     * 是否使用默认值
+     */
     private Boolean isDefault;
 
     public ModuleConfig() {
