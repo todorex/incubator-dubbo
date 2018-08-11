@@ -24,68 +24,119 @@ import java.util.Map;
 /**
  * RegistryConfig
  *
+ * 注册中心配置
  * @export
  */
 public class RegistryConfig extends AbstractConfig {
 
     public static final String NO_AVAILABLE = "N/A";
+
     private static final long serialVersionUID = 5508512956753757169L;
-    // register center address
+
+    /**
+     * 注册中心地址（如果地址没有端口缺省为9090）
+     */
     private String address;
 
-    // username to login register center
+    /**
+     * 用户名
+     */
     private String username;
 
-    // password to login register center
+    /**
+     * 密码
+     */
     private String password;
 
-    // default port for register center
+    /**
+     *  当address没有带端口时使用此端口做为缺省值(默认9090)
+     */
     private Integer port;
 
-    // protocol for register center
+    /**
+     * 注册中心地址协议，支持dubbo，http，local
+     */
     private String protocol;
 
-    // client impl
+    /**
+     * 网路传输方式，可选netty，mina （性能调优）
+     */
     private String transporter;
 
+    /**
+     * ??
+     */
     private String server;
 
+    /**
+     * ??
+     */
     private String client;
 
+    /**
+     * ??
+     */
     private String cluster;
 
+    /**
+     * ??
+     */
     private String group;
 
+    /**
+     * 版本
+     */
     private String version;
 
-    // request timeout in milliseconds for register center
+    /**
+     * 注册中心超市请求时间（毫秒）默认5000ms
+     */
     private Integer timeout;
 
-    // session timeout in milliseconds for register center
+    /**
+     * 注册中心会话超市时间(毫秒) 默认60000ms
+     * 用于检测提供者非正常断线后的脏数据
+     */
     private Integer session;
 
-    // file for saving register center dynamic list
+    /**
+     * 使用文件 缓存 注册中心地址列表及服务提供者列表
+     */
     private String file;
 
-    // wait time before stop
+    /**
+     * 停止时等待通知完成时间 (性能调优)
+     */
     private Integer wait;
 
-    // whether to check if register center is available when boot up
+    /**
+     *  注册中心不存在时，是否报错
+     */
     private Boolean check;
 
-    // whether to allow dynamic service to register on the register center
+    /**
+     * 服务是否动态注册
+     */
     private Boolean dynamic;
 
-    // whether to export service on the register center
+    /**
+     *  是否向此注册中心注册服务
+     */
     private Boolean register;
 
-    // whether allow to subscribe service on the register center
+    /**
+     * 是否向此注册中心订阅服务
+     */
     private Boolean subscribe;
 
-    // customized parameters
+    /**
+     * 自定义参数
+     */
     private Map<String, String> parameters;
 
-    // if it's default
+    /**
+     * 是否采用默认值
+     */
     private Boolean isDefault;
 
     public RegistryConfig() {
