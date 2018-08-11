@@ -54,13 +54,13 @@ public @interface Parameter {
     boolean escaped() default false;
 
     /**
-     *
+     * 是否为属性(用于事件通知)
      * @return
      */
     boolean attribute() default false;
 
     /**
-     *
+     * 是否拼接默认属性
      * @return
      */
     boolean append() default false;

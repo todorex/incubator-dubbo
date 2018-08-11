@@ -67,25 +67,46 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @see java.net.URL
  * @see java.net.URI
+ *
+ * example
+ * dubbo://10.25.8.76:20880/org.apache.dubbo.demo.DemoService?anyhost=true&application=demo-provider&dubbo=2.0.2&generic=false&interface=org.apache.dubbo.demo.DemoService&methods=sayHello&pid=1653&side=provider&timestamp=1533803025575
  */
 public /**final**/ class URL implements Serializable {
 
     private static final long serialVersionUID = -1985165475234910535L;
-
+    /**
+     * 协议名
+     */
     private final String protocol;
 
+    /**
+     * 用户名
+     */
     private final String username;
 
+    /**
+     * 密码
+     */
     private final String password;
 
-    // by default, host to registry
+    /**
+     * 主机地址
+     */
     private final String host;
 
-    // by default, port to registry
+    /**
+     * 端口
+     */
     private final int port;
 
+    /**
+     * 路径
+     */
     private final String path;
 
+    /**
+     * 参数
+     */
     private final Map<String, String> parameters;
 
     // ==== cache ====
@@ -1157,6 +1178,13 @@ public /**final**/ class URL implements Serializable {
         }
     }
 
+    /**
+     * 构建URL
+     * @param appendUser
+     * @param appendParameter
+     * @param parameters
+     * @return
+     */
     private String buildString(boolean appendUser, boolean appendParameter, String... parameters) {
         return buildString(appendUser, appendParameter, false, false, parameters);
     }
