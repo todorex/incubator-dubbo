@@ -43,6 +43,7 @@ import java.util.Map;
 
 /**
  * AbstractDefaultConfig
+ * 抽象接口配置类
  *
  * @export
  */
@@ -50,60 +51,101 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
 
     private static final long serialVersionUID = -1559314110797223229L;
 
-    // local impl class name for the service interface
+    /**
+     * 服务接口本地实现类名
+     */
     protected String local;
 
-    // local stub class name for the service interface
+    /**
+     * 服务接口本地存根类名
+     */
     protected String stub;
 
-    // service monitor
+    /**
+     * 监控配置类
+     */
     protected MonitorConfig monitor;
 
-    // proxy type
+    /**
+     * 生成动态代理方式
+     * 可选：jdk/javassist
+     */
     protected String proxy;
 
-    // cluster type
+    /**
+     * 集群方式
+     * 可选：failover/failfast/failsafe/failback/forking
+     */
     protected String cluster;
 
-    // filter
+    /**
+     * 服务提供方远程调用过程拦截器名称，多个名称用逗号分隔
+     */
     protected String filter;
 
-    // listener
+    /**
+     * 服务提供方导出服务监听器名称，多个名称用逗号分隔
+     */
     protected String listener;
 
-    // owner
+    /**
+     * 服务负责人
+     */
     protected String owner;
 
-    // connection limits, 0 means shared connection, otherwise it defines the connections delegated to the
-    // current service
+    /**
+     * 对每个提供者的最大连接数
+     */
     protected Integer connections;
 
-    // layer
+    /**
+     * 服务提供者所在的分层
+     * 如：biz、dao、intl:web、china:acton。
+     */
     protected String layer;
 
-    // application info
+    /**
+     * 应用配置类
+     */
     protected ApplicationConfig application;
 
-    // module info
+    /**
+     * 模块配置类
+     */
     protected ModuleConfig module;
 
-    // registry centers
+    /**
+     * 注册中心配置类 列表
+     */
     protected List<RegistryConfig> registries;
 
-    // connection events
+    /**
+     * 连接事件
+     */
     protected String onconnect;
 
-    // disconnection events
+    /**
+     * 断开连接事件
+     */
     protected String ondisconnect;
 
-    // callback limits
+    /**
+     * 回调数
+     */
     private Integer callbacks;
 
-    // the scope for referring/exporting a service, if it's local, it means searching in current JVM only.
+    /**
+     * 表示是引用服务还是暴露服务
+     */
     private String scope;
 
+    /**
+     * 校验 RegistryConfig 配置数组。
+     * 实际上，该方法会初始化 RegistryConfig 的配置属性。
+     */
     protected void checkRegistry() {
-        // for backward compatibility
+        // 向后兼容
+        // 当 RegistryConfig 对象数组为空时，若有 dubbo.registry.address 配置，进行创建
         if (registries == null || registries.isEmpty()) {
             String address = ConfigUtils.getProperty("dubbo.registry.address");
             if (address != null && address.length() > 0) {
@@ -126,10 +168,15 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                     + ", Please add <dubbo:registry address=\"...\" /> to your spring config. If you want unregister, please set <dubbo:service registry=\"N/A\" />");
         }
         for (RegistryConfig registryConfig : registries) {
+            // 读取环境变量和 properties 配置到 RegistryConfig 对象数组
             appendProperties(registryConfig);
         }
     }
 
+    /**
+     * 校验 ApplicationConfig 配置。
+     * 实际上，该方法会初始化 ApplicationConfig 的配置属性。
+     */
     @SuppressWarnings("deprecation")
     protected void checkApplication() {
         // for backward compatibility
@@ -255,6 +302,14 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         return null;
     }
 
+    /**
+     * 校验接口和方法
+     *  1. 接口类非空，并是接口
+     *  2. 方法在接口中已定义
+     *
+     * @param interfaceClass 接口类
+     * @param methods 方法数组
+     */
     protected void checkInterfaceAndMethods(Class<?> interfaceClass, List<MethodConfig> methods) {
         // interface cannot be null
         if (interfaceClass == null) {
@@ -285,7 +340,11 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
             }
         }
     }
-
+    /**
+     * 校验 Stub 和 Mock 相关的配置
+     *
+     * @param interfaceClass 接口类
+     */
     protected void checkStubAndMock(Class<?> interfaceClass) {
         if (ConfigUtils.isNotEmpty(local)) {
             Class<?> localClass = ConfigUtils.isDefault(local) ? ReflectUtils.forName(interfaceClass.getName() + "Local") : ReflectUtils.forName(local);
