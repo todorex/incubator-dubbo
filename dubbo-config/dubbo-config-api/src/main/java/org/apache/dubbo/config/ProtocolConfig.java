@@ -32,92 +32,161 @@ import java.util.Map;
 
 /**
  * ProtocolConfig
- *
+ * 生产者协议配置类
  * @export
  */
 public class ProtocolConfig extends AbstractConfig {
 
     private static final long serialVersionUID = 6913423882496634749L;
 
-    // protocol name
+    /**
+     * 协议名称 默认dubbo（性能调优）
+     */
     private String name;
 
-    // service IP address (when there are multiple network cards available)
+    /**
+     * 服务主机名
+     * 多网卡选择或指定VIP及域名时使用
+     * 为空则自动查找本机IP
+     * 建议不要配置，让Dubbo自动获取本机IP
+     */
     private String host;
 
-    // service port
+    /**
+     * 服务端口
+     * 不同的协议有自己的默认端口
+     */
     private Integer port;
 
-    // context path
+    /**
+     * 上下文路径，用于服务治理
+     */
     private String contextpath;
 
-    // thread pool
+    /**
+     * 线程池类型，可选：fixed/cached 默认fixed
+     * 性能调优
+     */
     private String threadpool;
 
-    // thread pool core thread size
+    /**
+     * 线程池核心线程数
+     */
     private Integer corethreads;
 
-    // thread pool size (fixed size)
+    /**
+     * 线程池大小（固定大小）默认200
+     */
     private Integer threads;
 
-    // IO thread pool size (fixed size)
+    /**
+     * IO线程池大小（固定大小） 默认cpu + 1
+     */
     private Integer iothreads;
 
-    // thread pool's queue length
+    /**
+     * 线程池队列大小
+     * 当线程池满时，排队等待执行的队列大小
+     * 建议不要设置，当线程池满时应立即失败
+     * 重试其它服务提供机器，而不是排队，除非有特殊需求
+     * （性能调优）
+     */
     private Integer queues;
 
-    // max acceptable connections
+    /**
+     * 服务提供方最大可接受连接数
+     * (性能调优)
+     */
     private Integer accepts;
 
-    // protocol codec
+    /**
+     * 协议编码方式 默认dubbo
+     */
     private String codec;
 
-    // serialization
+    /**
+     * 协议序列化方式
+     * 不同的协议有不同的序列化方式
+     */
     private String serialization;
 
-    // charset
+    /**
+     * 序列化编码 默认UTF-8
+     */
     private String charset;
 
-    // payload max length
+    /**
+     * 请求及响应数据包大小限制，单位：字节 默认8M
+     * （性能调优）
+     */
     private Integer payload;
 
-    // buffer size
+    /**
+     * 网络读写缓冲区大小 默认8192
+     * （性能调优）
+     */
     private Integer buffer;
 
-    // heartbeat interval
+    /**
+     * 心跳间隔
+     */
     private Integer heartbeat;
 
-    // access log
+    /**
+     * 设为true，将向logger中输出访问日志
+     */
     private String accesslog;
 
-    // transfort
+    /**
+     * 协议的服务端和客户端实现类型 可以分拆为server和client配置
+     * dubbo 默认为netty
+     */
     private String transporter;
 
-    // how information is exchanged
+    /**
+     * ??
+     */
     private String exchanger;
 
-    // thread dispatch mode
+    /**
+     * 协议的消息派发方式，用于指定线程模型
+     * dubbo协议 默认为 all
+     */
     private String dispatcher;
 
-    // networker
+    /**
+     * ？？
+     */
     private String networker;
 
-    // sever impl
+    /**
+     * 协议的服务器端实现类型
+     */
     private String server;
 
-    // client impl
+    /**
+     * 协议的客户端实现类型
+     */
     private String client;
 
-    // supported telnet commands, separated with comma.
+    /**
+     * 所支持的telnet命令，多个命令用逗号分隔
+     */
     private String telnet;
 
-    // command line prompt
+    /**
+     * 命令行提示
+     */
     private String prompt;
 
-    // status check
+    /**
+     * 状态检查
+     */
     private String status;
 
-    // whether to register
+    /**
+     * 该协议的服务是否注册到注册中心
+     */
     private Boolean register;
 
     // parameters
