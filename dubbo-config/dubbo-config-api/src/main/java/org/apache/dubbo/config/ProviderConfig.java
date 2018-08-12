@@ -29,7 +29,7 @@ import java.util.Arrays;
 
 /**
  * ProviderConfig
- *
+ * 服务提供者缺省值配置
  * @export
  * @see org.apache.dubbo.config.ProtocolConfig
  * @see org.apache.dubbo.config.ServiceConfig
@@ -37,6 +37,8 @@ import java.util.Arrays;
 public class ProviderConfig extends AbstractServiceConfig {
 
     private static final long serialVersionUID = 6913423882496634749L;
+
+    // ======== 协议默认值，当协议属性没有设置的时候该类将会起作用
 
     // ======== protocol default values, it'll take effect when protocol's attributes are not set ========
 
