@@ -66,6 +66,9 @@ public abstract class AbstractConfig implements Serializable {
      * 新老版本的properties 的 key 映射
      */
     private static final Map<String, String> legacyProperties = new HashMap<String, String>();
+    /**
+     * 配置类类名的后缀
+     */
     private static final String[] SUFFIXES = new String[]{"Config", "Bean"};
 
     static {
@@ -112,38 +115,44 @@ public abstract class AbstractConfig implements Serializable {
         if (config == null) {
             return;
         }
-        // 1.如dubbo.application.
+        // 组合之后就会变成例如：dubbo.service
         String prefix = "dubbo." + getTagName(config.getClass()) + ".";
         Method[] methods = config.getClass().getMethods();
         for (Method method : methods) {
             try {
                 String name = method.getName();
                 if (name.length() > 3 && name.startsWith("set") && Modifier.isPublic(method.getModifiers())
+                        // 方法的唯一参数是基本数据类型
+                        // 决定了一个配置对象无法设置另外一个配置对象数组为属性，即没有多注册中心，多协议等情况
                         && method.getParameterTypes().length == 1 && isPrimitive(method.getParameterTypes()[0])) {
-                    // 2. 拿到属性名，如name
+                    // 拿到属性名，如name
                     String property = StringUtils.camelToSplitName(name.substring(3, 4).toLowerCase() + name.substring(4), ".");
 
                     String value = null;
-                    // 3. 首先从带有id的配置类（环境变量中）去取
+                    // 首先从带有id的配置类（启动参数变量）去取 例如：`dubbo.application.demo-provider.name` demo-provider就是id
                     if (config.getId() != null && config.getId().length() > 0) {
+                        // 拼接上id
                         String pn = prefix + config.getId() + "." + property;
+                        // 从启动参数变量中拿到该属性
                         value = System.getProperty(pn);
                         if (!StringUtils.isBlank(value)) {
                             logger.info("Use System Property " + pn + " to config dubbo");
                         }
                     }
-                    // 4. 获取不到，则从不带id的配置类（环境变量中）取
+                    // 从启动参数变量中获取不到，则从不带id的配置类取，如`dubbo.application.name`
                     if (value == null || value.length() == 0) {
+                        // 不带id
                         String pn = prefix + property;
                         value = System.getProperty(pn);
                         if (!StringUtils.isBlank(value)) {
                             logger.info("Use System Property " + pn + " to config dubbo");
                         }
                     }
-                    // 获取不到，从XML中
+                    // 从启动参数变量中获取不到
                     if (value == null || value.length() == 0) {
                         Method getter;
                         try {
+                            // 拿到getter方法，getter 可以判断 XML 是否已经设置
                             getter = config.getClass().getMethod("get" + name.substring(3));
                         } catch (NoSuchMethodException e) {
                             try {
@@ -152,15 +161,18 @@ public abstract class AbstractConfig implements Serializable {
                                 getter = null;
                             }
                         }
+                        // 拿不到getter方法就从属性配置中取
                         if (getter != null) {
-                            // 从属性文件中取
+                            // 从带有id的属性配置中获取，如`dubbo.application.demo-provider.name`
                             if (getter.invoke(config) == null) {
                                 if (config.getId() != null && config.getId().length() > 0) {
                                     value = ConfigUtils.getProperty(prefix + config.getId() + "." + property);
                                 }
+                                // 从带有id的属性配置中获取，如`dubbo.application.name`
                                 if (value == null || value.length() == 0) {
                                     value = ConfigUtils.getProperty(prefix + property);
                                 }
+                                // 老版本兼容
                                 if (value == null || value.length() == 0) {
                                     String legacyKey = legacyProperties.get(prefix + property);
                                     if (legacyKey != null && legacyKey.length() > 0) {
