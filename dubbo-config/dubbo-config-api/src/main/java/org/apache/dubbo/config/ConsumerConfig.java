@@ -19,28 +19,43 @@ package org.apache.dubbo.config;
 /**
  * ConsumerConfig
  *
+ * 服务消费者缺省值配置
  * @export
  */
 public class ConsumerConfig extends AbstractReferenceConfig {
 
     private static final long serialVersionUID = 2827274711143680600L;
 
-    // is default or not
+    /**
+     * 是否默认
+     */
     private Boolean isDefault;
 
-    // networking framework client uses: netty, mina, etc.
+    /**
+     * 客户端网络框架
+     * 可选netty，mina，etc
+     */
     private String client;
 
-    // consumer thread pool type: cached, fixed, limit, eager
+    /**
+     * 消费者线程池种类
+     * 可选：: cached, fixed, limit, eager
+     */
     private String threadpool;
 
-    // consumer threadpool core thread size
+    /**
+     * 消费者线程数
+     */
     private Integer corethreads;
 
-    // consumer threadpool thread size
+    /**
+     * 消费者线程池线程数
+     */
     private Integer threads;
 
-    // consumer threadpool queue size
+    /**
+     * 消费者线程池队列数
+     */
     private Integer queues;
 
     @Override
