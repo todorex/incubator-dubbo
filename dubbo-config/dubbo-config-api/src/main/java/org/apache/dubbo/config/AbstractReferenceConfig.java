@@ -23,42 +23,65 @@ import org.apache.dubbo.rpc.support.ProtocolUtils;
 
 /**
  * AbstractConsumerConfig
- *
+ * 抽象消费者缺省配置
  * @export
  * @see org.apache.dubbo.config.ReferenceConfig
  */
 public abstract class AbstractReferenceConfig extends AbstractInterfaceConfig {
 
     private static final long serialVersionUID = -2786526984373031126L;
-
+    // ======== 消费者默认配置值，如果消费者的某些属性没有设置，这些值将会起作用
     // ======== Reference config default values, will take effect if reference's attribute is not set  ========
 
-    // check if service provider exists
+    /**
+     * 启动时检查提供者是否存在
+     * true报错，false忽略
+     */
     protected Boolean check;
 
-    // whether to eagle-init
+    /**
+     * 是否在afterPropertiesSet()时饥饿初始化引用
+     * 否则等到有人注入或引用该实例时再初始化
+     */
     protected Boolean init;
 
-    // whether to use generic interface
+    /**
+     * 是否缺省泛化接口
+     * 如果为泛化接口，将返回GenericService
+     */
     protected String generic;
 
-    // whether to find reference's instance from the current JVM
+    /**
+     * 是否从本地JVM发现服务消费者
+     */
     protected Boolean injvm;
 
-    // lazy create connection
+    /**
+     * 懒加载创建连接
+     */
     protected Boolean lazy;
 
+    /**
+     * TODO
+     */
     protected String reconnect;
 
+    /**
+     * TODO
+     */
     protected Boolean sticky;
 
     // whether to support event in stub. //TODO solve merge problem
     protected Boolean stubevent;//= Constants.DEFAULT_STUB_EVENT;
 
-    // version
+    /**
+     * 版本
+     */
     protected String version;
 
-    // group
+    /**
+     * 组
+     */
     protected String group;
 
     public Boolean isCheck() {
