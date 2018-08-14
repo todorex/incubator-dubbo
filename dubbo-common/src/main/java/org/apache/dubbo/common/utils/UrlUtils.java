@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * URL工具类
+ */
 public class UrlUtils {
 
     /**
@@ -32,6 +35,14 @@ public class UrlUtils {
      */
     private final static String URL_PARAM_STARTING_SYMBOL = "?";
 
+    /**
+     * 将address解析为URL数组
+     * 将一些默认值合并到address中
+     *
+     * @param address 设置的url
+     * @param defaults 默认参数集合
+     * @return
+     */
     public static URL parseURL(String address, Map<String, String> defaults) {
         if (address == null || address.length() == 0) {
             return null;
@@ -53,15 +64,19 @@ public class UrlUtils {
                 url += URL_PARAM_STARTING_SYMBOL + Constants.BACKUP_KEY + "=" + backup.toString();
             }
         }
+        // 拿到协议
         String defaultProtocol = defaults == null ? null : defaults.get("protocol");
         if (defaultProtocol == null || defaultProtocol.length() == 0) {
+            // 默认值
             defaultProtocol = "dubbo";
         }
+        // 配置 username, password, port, path
         String defaultUsername = defaults == null ? null : defaults.get("username");
         String defaultPassword = defaults == null ? null : defaults.get("password");
         int defaultPort = StringUtils.parseInteger(defaults == null ? null : defaults.get("port"));
         String defaultPath = defaults == null ? null : defaults.get("path");
         Map<String, String> defaultParameters = defaults == null ? null : new HashMap<String, String>(defaults);
+        // 保存
         if (defaultParameters != null) {
             defaultParameters.remove("protocol");
             defaultParameters.remove("username");
@@ -70,6 +85,7 @@ public class UrlUtils {
             defaultParameters.remove("port");
             defaultParameters.remove("path");
         }
+        // 根据字符串解析出URL
         URL u = URL.valueOf(url);
         boolean changed = false;
         String protocol = u.getProtocol();
@@ -101,6 +117,7 @@ public class UrlUtils {
                 port = defaultPort;
             } else {
                 changed = true;
+                // 默认9090
                 port = 9090;
             }
         }
@@ -129,10 +146,19 @@ public class UrlUtils {
         return u;
     }
 
+    /**
+     * 将address解析为URL数组
+     * 将一些默认值合并到address中
+     *
+     * @param address 设置的url
+     * @param defaults 默认参数集合
+     * @return
+     */
     public static List<URL> parseURLs(String address, Map<String, String> defaults) {
         if (address == null || address.length() == 0) {
             return null;
         }
+        // 利用','分割
         String[] addresses = Constants.REGISTRY_SPLIT_PATTERN.split(address);
         if (addresses == null || addresses.length == 0) {
             return null; //here won't be empty

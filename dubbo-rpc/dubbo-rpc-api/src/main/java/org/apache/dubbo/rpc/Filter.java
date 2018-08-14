@@ -21,11 +21,12 @@ import org.apache.dubbo.common.extension.SPI;
 /**
  * Filter. (SPI, Singleton, ThreadSafe)
  */
-@SPI
+@SPI // Dubbo SPI扩展点
 public interface Filter {
 
     /**
      * do invoke filter.
+     * 使用方法在调用前后加入逻辑
      * <p>
      * <code>
      * // before filter

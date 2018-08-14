@@ -192,7 +192,7 @@ public /**final**/ class URL implements Serializable {
 
     /**
      * Parse url string
-     *
+     * 根据url字符串解析出URL
      * @param url URL string
      * @return URL instance
      * @see URL

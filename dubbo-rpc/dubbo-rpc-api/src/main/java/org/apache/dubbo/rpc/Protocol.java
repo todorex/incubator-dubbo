@@ -25,7 +25,7 @@ import org.apache.dubbo.common.extension.SPI;
  * 服务域
  * 负责Invoker的生命周期管理
  */
-@SPI("dubbo")
+@SPI("dubbo") // SPI 扩展点
 public interface Protocol {
 
     /**

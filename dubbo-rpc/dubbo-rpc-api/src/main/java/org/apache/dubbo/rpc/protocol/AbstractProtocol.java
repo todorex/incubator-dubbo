@@ -33,11 +33,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * abstract ProtocolSupport.
+ * 协议抽象类
  */
 public abstract class AbstractProtocol implements Protocol {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Exporter 集合
+     * 该集合拥有该协议中，所有暴露中的 Exporter 对象
+     */
     protected final Map<String, Exporter<?>> exporterMap = new ConcurrentHashMap<String, Exporter<?>>();
 
     //TODO SOFEREFENCE
