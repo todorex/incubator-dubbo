@@ -355,7 +355,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
     }
 
     /**
-     * 解析 <dubbo:service class="" /> 情况下，内涵的 `<property />` 的赋值
+     * 解析 <dubbo:service class="" /> 情况下，内含的 `<property />` 的赋值
      *
      * @param nodeList
      * @param beanDefinition
