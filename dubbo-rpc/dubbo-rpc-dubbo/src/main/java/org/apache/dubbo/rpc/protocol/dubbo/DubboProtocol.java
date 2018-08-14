@@ -386,28 +386,41 @@ public class DubboProtocol extends AbstractProtocol {
 
     @Override
     public <T> Invoker<T> refer(Class<T> serviceType, URL url) throws RpcException {
+        // 初始化序列化优化器
         optimizeSerialization(url);
         // create rpc invoker.
+        // getClients(url),获得远程通信客户端数组
+        // 创建 DubboInvoker 对象
         DubboInvoker<T> invoker = new DubboInvoker<T>(serviceType, url, getClients(url), invokers);
+        // 添加到 `invokers`
         invokers.add(invoker);
         return invoker;
     }
 
+    /**
+     * 获得远程通信客户端数组
+     * @param url
+     * @return
+     */
     private ExchangeClient[] getClients(URL url) {
         // whether to share connection
+        // 是否共享连接
         boolean service_share_connect = false;
         int connections = url.getParameter(Constants.CONNECTIONS_KEY, 0);
         // if not configured, connection is shared, otherwise, one connection for one service
         if (connections == 0) {
+            // 未配置时，默认共享
             service_share_connect = true;
             connections = 1;
         }
-
+        // 创建连接服务提供者的 ExchangeClient 对象数组
         ExchangeClient[] clients = new ExchangeClient[connections];
         for (int i = 0; i < clients.length; i++) {
             if (service_share_connect) {
+                // 共享连接
                 clients[i] = getSharedClient(url);
             } else {
+                // 不共享连接
                 clients[i] = initClient(url);
             }
         }
@@ -416,6 +429,7 @@ public class DubboProtocol extends AbstractProtocol {
 
     /**
      * Get shared connection
+     * 获得共享连接客户端
      */
     private ExchangeClient getSharedClient(URL url) {
         String key = url.getAddress();
@@ -446,14 +460,16 @@ public class DubboProtocol extends AbstractProtocol {
 
     /**
      * Create new connection
+     * 创建一个新的客户端
      */
     private ExchangeClient initClient(URL url) {
 
         // client type setting.
         String str = url.getParameter(Constants.CLIENT_KEY, url.getParameter(Constants.SERVER_KEY, Constants.DEFAULT_REMOTING_CLIENT));
-
+        // 设置编解码器为 Dubbo ，即 DubboCountCodec
         url = url.addParameter(Constants.CODEC_KEY, DubboCodec.NAME);
         // enable heartbeat by default
+        // 默认开启 heartbeat
         url = url.addParameterIfAbsent(Constants.HEARTBEAT_KEY, String.valueOf(Constants.DEFAULT_HEARTBEAT));
 
         // BIO is not allowed since it has severe performance issue.
@@ -465,9 +481,11 @@ public class DubboProtocol extends AbstractProtocol {
         ExchangeClient client;
         try {
             // connection should be lazy
+            // 懒连接，创建 LazyConnectExchangeClient 对象
             if (url.getParameter(Constants.LAZY_CONNECT_KEY, false)) {
                 client = new LazyConnectExchangeClient(url, requestHandler);
             } else {
+                // 连接服务器，创建客户端
                 client = Exchangers.connect(url, requestHandler);
             }
         } catch (RemotingException e) {

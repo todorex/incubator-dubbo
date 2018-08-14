@@ -414,7 +414,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         // 是否是本地引用
         final boolean isJvmRefer;
         if (isInjvm() == null) {
-            // 直联服务提供者
+            // 直连服务提供者
             if (url != null && url.length() > 0) { // if a url is specified, don't do local reference
                 isJvmRefer = false;
                 // 通过 `tmpUrl` 判断，是否需要本地引用
@@ -438,30 +438,39 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                 logger.info("Using injvm service " + interfaceClass.getName());
             }
         } else {
-            // 远程调用
+            // // 定义直连地址，可以是服务提供者的地址，也可以是注册中心的地址
             if (url != null && url.length() > 0) { // user specified URL, could be peer-to-peer address, or register center's address.
+                // 拆分地址成数组，使用 ";" 分隔
                 String[] us = Constants.SEMICOLON_SPLIT_PATTERN.split(url);
                 if (us != null && us.length > 0) {
                     for (String u : us) {
+                        // 创建 URL 对象
                         URL url = URL.valueOf(u);
                         if (url.getPath() == null || url.getPath().length() == 0) {
                             url = url.setPath(interfaceName);
                         }
+                        // 注册中心的地址，带上服务引用的配置参数
                         if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) {
                             urls.add(url.addParameterAndEncoded(Constants.REFER_KEY, StringUtils.toQueryString(map)));
                         } else {
+                            // 服务提供者的地址
                             urls.add(ClusterUtils.mergeUrl(url, map));
                         }
                     }
                 }
+                // 注册中想
             } else { // assemble URL from register center's configuration
+                // 加载注册中心 URL 数组
                 List<URL> us = loadRegistries(false);
                 if (us != null && !us.isEmpty()) {
                     for (URL u : us) {
+                        // 加载监控中心 URL
                         URL monitorUrl = loadMonitor(u);
+                        // 服务引用配置对象 `map`，带上监控中心的 URL
                         if (monitorUrl != null) {
                             map.put(Constants.MONITOR_KEY, URL.encode(monitorUrl.toFullString()));
                         }
+                        // 注册中心的地址，带上服务引用的配置参数
                         urls.add(u.addParameterAndEncoded(Constants.REFER_KEY, StringUtils.toQueryString(map)));
                     }
                 }
@@ -469,8 +478,9 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                     throw new IllegalStateException("No such any registry to reference " + interfaceName + " on the consumer " + NetUtils.getLocalHost() + " use dubbo version " + Version.getVersion() + ", please config <dubbo:registry address=\"...\" /> to your spring config.");
                 }
             }
-
+            // 单 `urls` 时，引用服务，返回 Invoker 对象
             if (urls.size() == 1) {
+                // 引用服务
                 invoker = refprotocol.refer(interfaceClass, urls.get(0));
             } else {
                 List<Invoker<?>> invokers = new ArrayList<Invoker<?>>();
@@ -478,14 +488,18 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                 for (URL url : urls) {
                     invokers.add(refprotocol.refer(interfaceClass, url));
                     if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) {
+                        // 使用最后一个注册中心的 URL
                         registryURL = url; // use last registry url
                     }
                 }
+                // 有注册中心
                 if (registryURL != null) { // registry url is available
                     // use AvailableCluster only when register's cluster is available
+                    // 对有注册中心的 Cluster 只用 AvailableCluster
                     URL u = registryURL.addParameter(Constants.CLUSTER_KEY, AvailableCluster.NAME);
                     invoker = cluster.join(new StaticDirectory(u, invokers));
                 } else { // not a registry url
+                    // 无注册中心
                     invoker = cluster.join(new StaticDirectory(invokers));
                 }
             }

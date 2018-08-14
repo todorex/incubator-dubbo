@@ -27,7 +27,7 @@ import java.util.List;
  * Directory. (SPI, Prototype, ThreadSafe)
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Directory_service">Directory Service</a>
- *
+ * 在软件工程中，一个目录是指一组名字和值的映射，保存一组Invoker
  * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
  */
 public interface Directory<T> extends Node {
