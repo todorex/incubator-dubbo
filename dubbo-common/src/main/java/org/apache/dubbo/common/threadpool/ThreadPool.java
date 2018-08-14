@@ -25,15 +25,18 @@ import java.util.concurrent.Executor;
 
 /**
  * ThreadPool
+ * 标明是dubbo spi的一个扩展点，默认为扩展名为fixed
  */
+
 @SPI("fixed")
 public interface ThreadPool {
 
     /**
      * Thread pool
-     *
+     * 获得对应线程池
      * @param url URL contains thread parameter
      * @return thread pool
+     * 如果URL存在threadpool类型，则选择这个扩展名
      */
     @Adaptive({Constants.THREADPOOL_KEY})
     Executor getExecutor(URL url);
