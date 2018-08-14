@@ -25,6 +25,14 @@ import org.apache.dubbo.common.extension.SPI;
  */
 public class SpiExtensionFactory implements ExtensionFactory {
 
+    /**
+     * 获得拓展对象
+     *
+     * @param type 拓展接口
+     * @param name 拓展名
+     * @param <T> 泛型
+     * @return 拓展对象
+     */
     @Override
     public <T> T getExtension(Class<T> type, String name) {
         if (type.isInterface() && type.isAnnotationPresent(SPI.class)) {

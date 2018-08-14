@@ -18,6 +18,8 @@ package org.apache.dubbo.common.extension;
 
 /**
  * ExtensionFactory
+ * ExtensionFactory 自身也是拓展接口
+ * 基于 Dubbo SPI 加载具体拓展实现类
  */
 @SPI
 public interface ExtensionFactory {

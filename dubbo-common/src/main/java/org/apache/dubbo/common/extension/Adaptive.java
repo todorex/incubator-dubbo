@@ -26,6 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * Provide helpful information for {@link ExtensionLoader} to inject dependency extension instance.
+ * 提供一些信息（URL）用于注入依赖的扩展实例
  *
  * @see ExtensionLoader
  * @see URL
@@ -37,6 +38,7 @@ public @interface Adaptive {
     /**
      * Decide which target extension to be injected. The name of the target extension is decided by the parameter passed
      * in the URL, and the parameter names are given by this method.
+     * 由URL来决定对应的value是或否要作为扩展名
      * <p>
      * If the specified parameters are not found from {@link URL}, then the default extension will be used for
      * dependency injection (specified in its interface's {@link SPI}).
@@ -54,6 +56,16 @@ public @interface Adaptive {
      * <code>String[] {"yyy.invoker.wrapper"}</code>. This name will be used to search for parameter from URL.
      *
      * @return parameter key names in URL
+     * <ol>
+     *      <li>先在URL上找key1的Value作为要Adapt成的Extension名；
+     *      <li>key1没有Value，则使用key2的Value作为要Adapt成的Extension名。
+     *      <li>key2没有Value，使用缺省的扩展。
+     *      <li>如果没有设定缺省扩展，则方法调用会抛出{@link IllegalStateException}。
+     * </ol>
+     *
+     * 一个拓展接口，有且仅有一个 Adaptive 拓展实现类
+     * 第一种，标记在类上，代表手动实现它是一个拓展接口的 Adaptive 拓展实现类
+     * 第二种，标记在拓展接口的方法上，代表自动生成代码实现该接口的 Adaptive 拓展实现类
      */
     String[] value() default {};
 
