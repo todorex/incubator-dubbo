@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.apache.dubbo.config.AbstractInterfaceConfig</OriginalElement>
+  <nodes>
+    <node x="54.25" y="326.0">org.apache.dubbo.config.AbstractServiceConfig</node>
+    <node x="497.0138888888889" y="168.0">org.apache.dubbo.config.ApplicationConfig</node>
+    <node x="413.7638888888889" y="247.0">org.apache.dubbo.config.MethodConfig</node>
+    <node x="154.0" y="405.0">org.apache.dubbo.config.ServiceConfig</node>
+    <node x="467.0" y="405.0">org.apache.dubbo.config.ConsumerConfig</node>
+    <node x="307.0" y="484.0">org.apache.dubbo.config.spring.ReferenceBean</node>
+    <node x="154.01388888888889" y="168.0">org.apache.dubbo.config.MonitorConfig</node>
+    <node x="665.0138888888889" y="168.0">org.apache.dubbo.config.ModuleConfig</node>
+    <node x="412.875" y="79.0">org.apache.dubbo.config.AbstractConfig</node>
+    <node x="422.375" y="0.0">java.io.Serializable</node>
+    <node x="302.0138888888889" y="168.0">org.apache.dubbo.config.AbstractMethodConfig</node>
+    <node x="0.0" y="405.0">org.apache.dubbo.config.ProviderConfig</node>
+    <node x="158.0" y="484.0">org.apache.dubbo.config.spring.ServiceBean</node>
+    <node x="811.0138888888889" y="168.0">org.apache.dubbo.config.RegistryConfig</node>
+    <node x="303.0" y="405.0">org.apache.dubbo.config.ReferenceConfig</node>
+    <node x="1.0138888888888573" y="168.0">org.apache.dubbo.config.ProtocolConfig</node>
+    <node x="209.76388888888889" y="247.0">org.apache.dubbo.config.AbstractInterfaceConfig</node>
+    <node x="360.75" y="326.0">org.apache.dubbo.config.AbstractReferenceConfig</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.apache.dubbo.config.ReferenceConfig" target="org.apache.dubbo.config.AbstractReferenceConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="375.0" y="380.0" />
+      <point x="408.75" y="380.0" />
+      <point x="-48.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.ApplicationConfig" target="org.apache.dubbo.config.AbstractConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="571.0138888888889" y="148.0" />
+      <point x="490.45833333333337" y="148.0" />
+      <point x="11.083333333333371" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.ModuleConfig" target="org.apache.dubbo.config.AbstractConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="728.0138888888889" y="138.0" />
+      <point x="512.625" y="138.0" />
+      <point x="33.25" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.AbstractServiceConfig" target="org.apache.dubbo.config.AbstractInterfaceConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="142.75" y="301.0" />
+      <point x="255.76388888888889" y="301.0" />
+      <point x="-46.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.ServiceConfig" target="org.apache.dubbo.config.AbstractServiceConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="218.5" y="380.0" />
+      <point x="187.0" y="380.0" />
+      <point x="44.25" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.spring.ServiceBean" target="org.apache.dubbo.config.ServiceConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.AbstractMethodConfig" target="org.apache.dubbo.config.AbstractConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="389.5138888888889" y="148.0" />
+      <point x="468.29166666666663" y="148.0" />
+      <point x="-11.083333333333314" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.ConsumerConfig" target="org.apache.dubbo.config.AbstractReferenceConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="538.5" y="380.0" />
+      <point x="504.75" y="380.0" />
+      <point x="48.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.MethodConfig" target="org.apache.dubbo.config.AbstractMethodConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="477.2638888888889" y="222.0" />
+      <point x="433.2638888888889" y="222.0" />
+      <point x="43.75" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.MonitorConfig" target="org.apache.dubbo.config.AbstractConfig">
+      <point x="2.8421709430404007E-14" y="-14.5" />
+      <point x="218.0138888888889" y="138.0" />
+      <point x="446.125" y="138.0" />
+      <point x="-33.25" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.AbstractConfig" target="java.io.Serializable">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.ProviderConfig" target="org.apache.dubbo.config.AbstractServiceConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="67.0" y="380.0" />
+      <point x="98.5" y="380.0" />
+      <point x="-44.25" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.spring.ReferenceBean" target="org.apache.dubbo.config.ReferenceConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.RegistryConfig" target="org.apache.dubbo.config.AbstractConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="877.0138888888889" y="128.0" />
+      <point x="534.7916666666667" y="128.0" />
+      <point x="55.41666666666674" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.AbstractInterfaceConfig" target="org.apache.dubbo.config.AbstractMethodConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="301.7638888888889" y="222.0" />
+      <point x="345.7638888888889" y="222.0" />
+      <point x="-43.75" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.AbstractReferenceConfig" target="org.apache.dubbo.config.AbstractInterfaceConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="456.75" y="301.0" />
+      <point x="347.7638888888889" y="301.0" />
+      <point x="46.0" y="14.5" />
+    </edge>
+    <edge source="org.apache.dubbo.config.ProtocolConfig" target="org.apache.dubbo.config.AbstractConfig">
+      <point x="0.0" y="-14.5" />
+      <point x="67.51388888888886" y="128.0" />
+      <point x="423.95833333333326" y="128.0" />
+      <point x="-55.416666666666686" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.7801254657349983" x="454.05394744873047" y="251.28374481201172" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
