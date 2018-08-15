@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 
 /**
  * Wrapper.
+ * 用于创建某个对象的方法调用的包装器，以避免反射调用，提高性能
  */
 public abstract class Wrapper {
     private static final Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<Class<?>, Wrapper>(); //class wrapper map
@@ -91,18 +92,20 @@ public abstract class Wrapper {
 
     /**
      * get wrapper.
-     *
+     * 根据指定类，获得 Wrapper 对象
      * @param c Class instance.
      * @return Wrapper instance(not null).
      */
     public static Wrapper getWrapper(Class<?> c) {
+        // 判断是否继承 ClassGenerator.DC.class ，如果是，拿到父类，避免重复包装
         while (ClassGenerator.isDynamicClass(c)) // can not wrapper on dynamic class.
             c = c.getSuperclass();
-
+        // 指定类为 Object.class
         if (c == Object.class)
             return OBJECT_WRAPPER;
-
+        // 从缓存中获得 Wrapper 对象
         Wrapper ret = WRAPPER_MAP.get(c);
+        // 创建 Wrapper 对象，并添加到缓存
         if (ret == null) {
             ret = makeWrapper(c);
             WRAPPER_MAP.put(c, ret);
@@ -110,6 +113,11 @@ public abstract class Wrapper {
         return ret;
     }
 
+    /**
+     * 创建 Wrapper 对象
+     * @param c
+     * @return
+     */
     private static Wrapper makeWrapper(Class<?> c) {
         if (c.isPrimitive())
             throw new IllegalArgumentException("Can not create wrapper for primitive type: " + c);
@@ -414,11 +422,13 @@ public abstract class Wrapper {
     /**
      * invoke method.
      *
-     * @param instance instance.
-     * @param mn       method name.
-     * @param types
-     * @param args     argument array.
-     * @return return value.
+     * 调用方法
+     *
+     * @param instance instance. 被调用的对象
+     * @param mn       method name. 方法名
+     * @param types 参数类型数组
+     * @param args     argument array. 参数数组
+     * @return return value. 返回值
      */
     abstract public Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args) throws NoSuchMethodException, InvocationTargetException;
 }

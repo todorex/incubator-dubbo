@@ -44,16 +44,38 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * ClassGenerator
+ * 类生成器，基于 Javassist 实现
  */
 public final class ClassGenerator {
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
     private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool
+    /**
+     * CtClass hash 集合
+     * key：类名
+     */
     private ClassPool mPool;
+    /**
+     * CtClass 对象
+     *
+     * 使用 {@link #mPool} 生成
+     */
     private CtClass mCtc;
+    /**
+     * 生成类的类名
+     */
     private String mClassName, mSuperClass;
+    /**
+     * 生成类的接口集合
+     */
     private Set<String> mInterfaces;
+    /**
+     * 生成类的属性集合
+     */
     private List<String> mFields, mConstructors, mMethods;
+    /**
+     * 生成类的方法代码集合
+     */
     private Map<String, Method> mCopyMethods; // <method desc,method instance>
     private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance>
     private boolean mDefaultConstructor = false;
@@ -259,6 +281,12 @@ public final class ClassGenerator {
         return toClass(ClassHelper.getClassLoader(ClassGenerator.class), getClass().getProtectionDomain());
     }
 
+    /**
+     * 生成类
+     * @param loader
+     * @param pd
+     * @return
+     */
     public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) {
         if (mCtc != null)
             mCtc.detach();
