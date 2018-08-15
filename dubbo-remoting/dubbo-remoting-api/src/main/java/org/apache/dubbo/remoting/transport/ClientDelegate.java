@@ -25,6 +25,7 @@ import java.net.InetSocketAddress;
 
 /**
  * ClientDelegate
+ * 客户端装饰者实现类
  */
 public class ClientDelegate implements Client {
 

@@ -22,6 +22,7 @@ import org.apache.dubbo.remoting.Dispatcher;
 
 /**
  * default thread pool configure
+ * 线程模型：是通过装饰器模式，组合而成
  */
 public class AllDispatcher implements Dispatcher {
 
@@ -29,6 +30,7 @@ public class AllDispatcher implements Dispatcher {
 
     @Override
     public ChannelHandler dispatch(ChannelHandler handler, URL url) {
+        // 创建 AllChannelHandler 对象
         return new AllChannelHandler(handler, url);
     }
 

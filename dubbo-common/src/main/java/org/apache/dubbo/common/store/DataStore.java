@@ -21,7 +21,10 @@ import org.apache.dubbo.common.extension.SPI;
 
 import java.util.Map;
 
-@SPI("simple")
+/**
+ * 相当于ConcurrentMap<String, ConcurrentMap<String, Object>> 的集合
+ */
+@SPI("simple")// SPI扩展点
 public interface DataStore {
 
     /**
