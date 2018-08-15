@@ -24,6 +24,8 @@ import org.apache.dubbo.remoting.transport.ChannelHandlerDispatcher;
 
 /**
  * Transporter facade. (API, Static, ThreadSafe)
+ * Transporter 门面类
+ * 门面模式：
  */
 public class Transporters {
 
@@ -36,6 +38,13 @@ public class Transporters {
     private Transporters() {
     }
 
+    /**
+     * 绑定一个服务器
+     * @param url
+     * @param handler
+     * @return
+     * @throws RemotingException
+     */
     public static Server bind(String url, ChannelHandler... handler) throws RemotingException {
         return bind(URL.valueOf(url), handler);
     }
@@ -47,15 +56,25 @@ public class Transporters {
         if (handlers == null || handlers.length == 0) {
             throw new IllegalArgumentException("handlers == null");
         }
+        // 创建 handler
         ChannelHandler handler;
         if (handlers.length == 1) {
             handler = handlers[0];
         } else {
+            // handlers 是多个，使用 ChannelHandlerDispatcher 进行封装
             handler = new ChannelHandlerDispatcher(handlers);
         }
+        // 创建 Server 对象
         return getTransporter().bind(url, handler);
     }
 
+    /**
+     * 创建一个客户端
+     * @param url
+     * @param handler
+     * @return
+     * @throws RemotingException
+     */
     public static Client connect(String url, ChannelHandler... handler) throws RemotingException {
         return connect(URL.valueOf(url), handler);
     }
@@ -75,6 +94,10 @@ public class Transporters {
         return getTransporter().connect(url, handler);
     }
 
+    /**
+     * SPI加载得到Transporter作为实际工作者
+     * @return
+     */
     public static Transporter getTransporter() {
         return ExtensionLoader.getExtensionLoader(Transporter.class).getAdaptiveExtension();
     }

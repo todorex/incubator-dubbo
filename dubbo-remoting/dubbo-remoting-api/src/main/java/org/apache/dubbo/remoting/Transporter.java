@@ -25,35 +25,40 @@ import javax.sound.midi.Receiver;
 
 /**
  * Transporter. (SPI, Singleton, ThreadSafe)
+ * 网络传输接口
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Transport_Layer">Transport Layer</a>
  * <a href="http://en.wikipedia.org/wiki/Client%E2%80%93server_model">Client/Server</a>
  *
  * @see org.apache.dubbo.remoting.Transporters
  */
-@SPI("netty")
+@SPI("netty") // 默认使用netty3 netty4通过<dubbo:provider server="netty4" />启用
 public interface Transporter {
 
     /**
      * Bind a server.
-     *
+     * 绑定一个服务器
      * @param url     server url
      * @param handler
-     * @return server
+     * @return server 服务器
      * @throws RemotingException
      * @see org.apache.dubbo.remoting.Transporters#bind(URL, Receiver, ChannelHandler)
+     *
+     * 基于 Dubbo SPI Adaptive 机制，加载对应的 Server 实现
      */
     @Adaptive({Constants.SERVER_KEY, Constants.TRANSPORTER_KEY})
     Server bind(URL url, ChannelHandler handler) throws RemotingException;
 
     /**
      * Connect to a server.
-     *
+     * 连接一个服务器，即创建一个客户端
      * @param url     server url
      * @param handler
      * @return client
      * @throws RemotingException
      * @see org.apache.dubbo.remoting.Transporters#connect(URL, Receiver, ChannelListener)
+     *
+     * 基于 Dubbo SPI Adaptive 机制，加载对应的 Client 实现
      */
     @Adaptive({Constants.CLIENT_KEY, Constants.TRANSPORTER_KEY})
     Client connect(URL url, ChannelHandler handler) throws RemotingException;

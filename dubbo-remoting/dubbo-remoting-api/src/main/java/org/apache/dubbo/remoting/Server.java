@@ -23,6 +23,7 @@ import java.util.Collection;
 
 /**
  * Remoting Server. (API/SPI, Prototype, ThreadSafe)
+ * 服务器接口
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Client%E2%80%93server_model">Client/Server</a>
  *
@@ -46,7 +47,7 @@ public interface Server extends Endpoint, Resetable {
 
     /**
      * get channel.
-     *
+     * 获得连接上服务器的通道（客户端）们
      * @param remoteAddress
      * @return channel
      */

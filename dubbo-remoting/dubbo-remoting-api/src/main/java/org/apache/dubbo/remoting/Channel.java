@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
 
 /**
  * Channel. (API/SPI, Prototype, ThreadSafe)
- *
+ * 继承 Endpoint 接口，通道接口
  *
  *
  * @see org.apache.dubbo.remoting.Client
