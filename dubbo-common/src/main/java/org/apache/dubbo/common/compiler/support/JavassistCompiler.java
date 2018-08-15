@@ -34,29 +34,50 @@ import java.util.regex.Pattern;
 
 /**
  * JavassistCompiler. (SPI, Singleton, ThreadSafe)
+ * Javassist操作 http://www.cnblogs.com/sunfie/p/5154246.html
  */
 public class JavassistCompiler extends AbstractCompiler {
 
+    /**
+     * import正则
+     */
     private static final Pattern IMPORT_PATTERN = Pattern.compile("import\\s+([\\w\\.\\*]+);\n");
 
+    /**
+     * extends正则
+     */
     private static final Pattern EXTENDS_PATTERN = Pattern.compile("\\s+extends\\s+([\\w\\.]+)[^\\{]*\\{\n");
 
+    /**
+     * Implement正则
+     */
     private static final Pattern IMPLEMENTS_PATTERN = Pattern.compile("\\s+implements\\s+([\\w\\.]+)\\s*\\{\n");
 
+    /**
+     * method正则
+     */
     private static final Pattern METHODS_PATTERN = Pattern.compile("\n(private|public|protected)\\s+");
 
+    /**
+     * field正则
+     */
     private static final Pattern FIELD_PATTERN = Pattern.compile("[^\n]+=[^\n]+;");
 
     @Override
     public Class<?> doCompile(String name, String source) throws Throwable {
+        // 获得类名
         int i = name.lastIndexOf('.');
         String className = i < 0 ? name : name.substring(i + 1);
+        // 创建 ClassPool 对象
         ClassPool pool = new ClassPool(true);
+        // 设置类搜索路径
         pool.appendClassPath(new LoaderClassPath(ClassHelper.getCallerClassLoader(getClass())));
         Matcher matcher = IMPORT_PATTERN.matcher(source);
+        // 匹配 import
         List<String> importPackages = new ArrayList<String>();
         Map<String, String> fullNames = new HashMap<String, String>();
         while (matcher.find()) {
+            // 匹配包名
             String pkg = matcher.group(1);
             if (pkg.endsWith(".*")) {
                 String pkgName = pkg.substring(0, pkg.length() - 2);
@@ -73,6 +94,7 @@ public class JavassistCompiler extends AbstractCompiler {
             }
         }
         String[] packages = importPackages.toArray(new String[0]);
+        // 匹配 extends
         matcher = EXTENDS_PATTERN.matcher(source);
         CtClass cls;
         if (matcher.find()) {
@@ -89,6 +111,7 @@ public class JavassistCompiler extends AbstractCompiler {
         } else {
             cls = pool.makeClass(name);
         }
+        // 匹配 implements
         matcher = IMPLEMENTS_PATTERN.matcher(source);
         if (matcher.find()) {
             String[] ifaces = matcher.group(1).trim().split("\\,");
@@ -119,6 +142,7 @@ public class JavassistCompiler extends AbstractCompiler {
                 }
             }
         }
+        // 生成类
         return cls.toClass(ClassHelper.getCallerClassLoader(getClass()), JavassistCompiler.class.getProtectionDomain());
     }
 

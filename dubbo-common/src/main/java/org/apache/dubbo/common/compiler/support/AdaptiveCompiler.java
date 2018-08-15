@@ -17,16 +17,21 @@
 package org.apache.dubbo.common.compiler.support;
 
 
+import com.sun.tools.javac.resources.compiler;
 import org.apache.dubbo.common.compiler.Compiler;
 import org.apache.dubbo.common.extension.Adaptive;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 
 /**
  * AdaptiveCompiler. (SPI, Singleton, ThreadSafe)
+ * 自适应 Compiler 实现类
  */
 @Adaptive
 public class AdaptiveCompiler implements Compiler {
 
+    /**
+     *     ApplicationConfig的setCompiler(compiler) 方法调用
+     */
     private static volatile String DEFAULT_COMPILER;
 
     public static void setDefaultCompiler(String compiler) {
@@ -36,11 +41,14 @@ public class AdaptiveCompiler implements Compiler {
     @Override
     public Class<?> compile(String code, ClassLoader classLoader) {
         Compiler compiler;
+        // 获得 Compiler 的 ExtensionLoader 对象
         ExtensionLoader<Compiler> loader = ExtensionLoader.getExtensionLoader(Compiler.class);
+        // 使用设置的拓展名，获得 Compiler 拓展对象
         String name = DEFAULT_COMPILER; // copy reference
         if (name != null && name.length() > 0) {
             compiler = loader.getExtension(name);
         } else {
+            // 获得默认的 Compiler 拓展对象
             compiler = loader.getDefaultExtension();
         }
         return compiler.compile(code, classLoader);
