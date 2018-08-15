@@ -25,6 +25,9 @@ import org.apache.dubbo.remoting.Transporter;
 
 public class NettyTransporter implements Transporter {
 
+    /**
+     * 拓展名
+     */
     public static final String NAME = "netty3";
 
     @Override
