@@ -35,15 +35,23 @@ import java.net.InetSocketAddress;
 
 /**
  * ExchangeReceiver
+ * 基于消息头部( Header )的信息交换通道实现类
  */
 final class HeaderExchangeChannel implements ExchangeChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(HeaderExchangeChannel.class);
 
+
     private static final String CHANNEL_KEY = HeaderExchangeChannel.class.getName() + ".CHANNEL";
 
+    /**
+     * 通道 HeaderExchangeChannel=>NettyChannel=>NioSocketChannel
+     *
+     */
     private final Channel channel;
-
+    /**
+     * 是否关闭
+     */
     private volatile boolean closed = false;
 
     HeaderExchangeChannel(Channel channel) {
@@ -101,6 +109,13 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         return request(request, channel.getUrl().getPositiveParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT));
     }
 
+    /**
+     * 发送请求
+     * @param request
+     * @param timeout
+     * @return
+     * @throws RemotingException
+     */
     @Override
     public ResponseFuture request(Object request, int timeout) throws RemotingException {
         if (closed) {
@@ -111,6 +126,7 @@ final class HeaderExchangeChannel implements ExchangeChannel {
         req.setVersion(Version.getProtocolVersion());
         req.setTwoWay(true);
         req.setData(request);
+        // 创建 DefaultFuture 对象
         DefaultFuture future = new DefaultFuture(channel, req, timeout);
         try {
             channel.send(req);
@@ -142,6 +158,7 @@ final class HeaderExchangeChannel implements ExchangeChannel {
             return;
         }
         closed = true;
+        // 等待请求完成
         if (timeout > 0) {
             long start = System.currentTimeMillis();
             while (DefaultFuture.hasFuture(channel)

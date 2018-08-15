@@ -44,7 +44,7 @@ import java.io.InputStream;
 /**
  * ExchangeCodec.
  *
- *
+ * 信息交换编解码器
  *
  */
 public class ExchangeCodec extends TelnetCodec {
@@ -111,6 +111,7 @@ public class ExchangeCodec extends TelnetCodec {
         }
 
         // get data length.
+        // `[96 - 127]`：Body 的**长度**。通过该长度，读取 Body 
         int len = Bytes.bytes2int(header, 12);
         checkPayload(channel, len);
 
@@ -209,23 +210,35 @@ public class ExchangeCodec extends TelnetCodec {
         return req.getData();
     }
 
+    /**
+     * 编码请求
+     * @param channel
+     * @param buffer
+     * @param req
+     * @throws IOException
+     */
     protected void encodeRequest(Channel channel, ChannelBuffer buffer, Request req) throws IOException {
         Serialization serialization = getSerialization(channel);
         // header.
+        // `[0, 15]`：Magic Number
         byte[] header = new byte[HEADER_LENGTH];
         // set magic number.
         Bytes.short2bytes(MAGIC, header);
 
         // set request and serialization flag.
+        // `[16, 20]`：Serialization 编号 && `[23]`：请求。
         header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId());
 
+        // `[21]`：`event` 是否为事件。
         if (req.isTwoWay()) header[2] |= FLAG_TWOWAY;
         if (req.isEvent()) header[2] |= FLAG_EVENT;
 
         // set request id.
+        // `[32 - 95]`：`id` 编号，Long 型
         Bytes.long2bytes(req.getId(), header, 4);
 
         // encode request data.
+        // 编码 `Request.data` 到 Body ，并写入到 Buffer
         int savedWriteIndex = buffer.writerIndex();
         buffer.writerIndex(savedWriteIndex + HEADER_LENGTH);
         ChannelBufferOutputStream bos = new ChannelBufferOutputStream(buffer);
@@ -241,11 +254,14 @@ public class ExchangeCodec extends TelnetCodec {
         }
         bos.flush();
         bos.close();
+        // 检查 Body 长度，是否超过消息上限
         int len = bos.writtenBytes();
         checkPayload(channel, len);
+        // `[96 - 127]`：Body 的**长度**。
         Bytes.int2bytes(len, header, 12);
 
         // write
+        // 写入 Header 到 Buffer
         buffer.writerIndex(savedWriteIndex);
         buffer.writeBytes(header); // write header.
         buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);

@@ -25,29 +25,32 @@ import org.apache.dubbo.remoting.exchange.support.header.HeaderExchanger;
 
 /**
  * Exchanger. (SPI, Singleton, ThreadSafe)
+ * 数据交换者接口
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Message_Exchange_Pattern">Message Exchange Pattern</a>
  * <a href="http://en.wikipedia.org/wiki/Request-response">Request-Response</a>
  */
-@SPI(HeaderExchanger.NAME)
+@SPI(HeaderExchanger.NAME)// 扩展点
 public interface Exchanger {
 
     /**
      * bind.
-     *
+     * 绑定一个服务器
      * @param url
      * @param handler
      * @return message server
+     * 基于 Dubbo SPI Adaptive 机制，加载对应的 Server 实现
      */
     @Adaptive({Constants.EXCHANGER_KEY})
     ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException;
 
     /**
      * connect.
-     *
+     * 连接一个服务器，即创建一个客户端
      * @param url
      * @param handler
      * @return message channel
+     * 基于 Dubbo SPI Adaptive 机制，加载对应的 Server 实现
      */
     @Adaptive({Constants.EXCHANGER_KEY})
     ExchangeClient connect(URL url, ExchangeHandler handler) throws RemotingException;

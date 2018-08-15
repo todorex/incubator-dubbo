@@ -38,6 +38,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * DefaultFuture.
+ * 默认响应 Future 实现类
  */
 public class DefaultFuture implements ResponseFuture {
 
@@ -45,6 +46,9 @@ public class DefaultFuture implements ResponseFuture {
 
     private static final Map<Long, Channel> CHANNELS = new ConcurrentHashMap<Long, Channel>();
 
+    /**
+     * 所有 DefaultFuture 的管理容器
+     */
     private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<Long, DefaultFuture>();
 
     static {
@@ -58,7 +62,13 @@ public class DefaultFuture implements ResponseFuture {
     private final Channel channel;
     private final Request request;
     private final int timeout;
+    /**
+     * 锁
+     */
     private final Lock lock = new ReentrantLock();
+    /**
+     * 完成 Condition
+     */
     private final Condition done = lock.newCondition();
     private final long start = System.currentTimeMillis();
     private volatile long sent;
@@ -112,15 +122,23 @@ public class DefaultFuture implements ResponseFuture {
         return get(timeout);
     }
 
+    /**
+     * 得到返回结果
+     * @param timeout
+     * @return
+     * @throws RemotingException
+     */
     @Override
     public Object get(int timeout) throws RemotingException {
         if (timeout <= 0) {
             timeout = Constants.DEFAULT_TIMEOUT;
         }
+        // 若未完成，等待
         if (!isDone()) {
             long start = System.currentTimeMillis();
             lock.lock();
             try {
+                // 等待完成或超时
                 while (!isDone()) {
                     done.await(timeout, TimeUnit.MILLISECONDS);
                     if (isDone() || System.currentTimeMillis() - start > timeout) {
@@ -136,6 +154,7 @@ public class DefaultFuture implements ResponseFuture {
                 throw new TimeoutException(sent > 0, channel, getTimeoutMessage(false));
             }
         }
+        // 返回响应
         return returnFromResponse();
     }
 
@@ -208,17 +227,25 @@ public class DefaultFuture implements ResponseFuture {
         }
     }
 
+    /**
+     * 返回响应( Response )
+     * @return
+     * @throws RemotingException
+     */
     private Object returnFromResponse() throws RemotingException {
         Response res = response;
         if (res == null) {
             throw new IllegalStateException("response cannot be null");
         }
+        // 正常，返回结果
         if (res.getStatus() == Response.OK) {
             return res.getResult();
         }
+        // 超时，抛出 TimeoutException 异常
         if (res.getStatus() == Response.CLIENT_TIMEOUT || res.getStatus() == Response.SERVER_TIMEOUT) {
             throw new TimeoutException(res.getStatus() == Response.SERVER_TIMEOUT, channel, res.getErrorMessage());
         }
+        // 其他，抛出 RemotingException 异常
         throw new RemotingException(channel, res.getErrorMessage());
     }
 

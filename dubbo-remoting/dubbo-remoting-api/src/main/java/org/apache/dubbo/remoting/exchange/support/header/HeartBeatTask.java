@@ -26,6 +26,9 @@ import org.apache.dubbo.remoting.exchange.Request;
 
 import java.util.Collection;
 
+/**
+ * 心跳任务
+ */
 final class HeartBeatTask implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatTask.class);
@@ -55,6 +58,7 @@ final class HeartBeatTask implements Runnable {
                             HeaderExchangeHandler.KEY_READ_TIMESTAMP);
                     Long lastWrite = (Long) channel.getAttribute(
                             HeaderExchangeHandler.KEY_WRITE_TIMESTAMP);
+                    // 最后读写的时间，任一超过心跳间隔，发送心跳
                     if ((lastRead != null && now - lastRead > heartbeat)
                             || (lastWrite != null && now - lastWrite > heartbeat)) {
                         Request req = new Request();

@@ -39,6 +39,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * ExchangeReceiver
+ * 基于消息头部( Header )的信息交换处理器实现类
  */
 public class HeaderExchangeHandler implements ChannelHandlerDelegate {
 
@@ -77,11 +78,17 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         }
     }
 
+    /**
+     * 处理请求
+     * @param channel
+     * @param req
+     * @throws RemotingException
+     */
     void handleRequest(final ExchangeChannel channel, Request req) throws RemotingException {
         Response res = new Response(req.getId(), req.getVersion());
         if (req.isBroken()) {
             Object data = req.getData();
-
+            // 请求数据，转成 msg
             String msg;
             if (data == null) msg = null;
             else if (data instanceof Throwable) msg = StringUtils.toString((Throwable) data);
@@ -94,6 +101,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         }
         // find handler by message class.
         Object msg = req.getData();
+        // 使用 ExchangeHandler 处理，并返回响应
         try {
             // handle data.
             CompletableFuture<Object> future = handler.reply(channel, msg);
@@ -180,23 +188,36 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
         }
     }
 
+    /**
+     * 接受消息
+     * @param channel channel.
+     * @param message message.
+     * @throws RemotingException
+     */
     @Override
     public void received(Channel channel, Object message) throws RemotingException {
+        // 设置最后的读时间
         channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());
+        // 创建 ExchangeChannel 对象
         final ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);
         try {
+            // 处理请求( Request )
             if (message instanceof Request) {
                 // handle request.
                 Request request = (Request) message;
                 if (request.isEvent()) {
+                    // 处理事件请求
                     handlerEvent(channel, request);
                 } else {
+                    // 处理普通请求
                     if (request.isTwoWay()) {
                         handleRequest(exchangeChannel, request);
                     } else {
+                        // 提交给装饰的 `handler`，继续处理
                         handler.received(exchangeChannel, request.getData());
                     }
                 }
+                // 处理响应( Response )
             } else if (message instanceof Response) {
                 handleResponse(channel, (Response) message);
             } else if (message instanceof String) {
@@ -204,6 +225,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
                     Exception e = new Exception("Dubbo client can not supported string message: " + message + " in channel: " + channel + ", url: " + channel.getUrl());
                     logger.error(e.getMessage(), e);
                 } else {
+                    // 处理 String
                     String echo = handler.telnet(channel, (String) message);
                     if (echo != null && echo.length() > 0) {
                         channel.send(echo);

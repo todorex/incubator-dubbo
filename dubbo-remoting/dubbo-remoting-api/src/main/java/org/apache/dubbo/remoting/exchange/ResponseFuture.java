@@ -20,7 +20,7 @@ import org.apache.dubbo.remoting.RemotingException;
 
 /**
  * Future. (API/SPI, Prototype, ThreadSafe)
- *
+ * 响应 Future 接口
  * @see org.apache.dubbo.remoting.exchange.ExchangeChannel#request(Object)
  * @see org.apache.dubbo.remoting.exchange.ExchangeChannel#request(Object, int)
  */
@@ -43,7 +43,7 @@ public interface ResponseFuture {
 
     /**
      * set callback.
-     *
+     * 设置回调
      * @param callback
      */
     void setCallback(ResponseCallback callback);

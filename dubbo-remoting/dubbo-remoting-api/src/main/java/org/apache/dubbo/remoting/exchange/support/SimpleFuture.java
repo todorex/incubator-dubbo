@@ -22,6 +22,7 @@ import org.apache.dubbo.remoting.exchange.ResponseFuture;
 
 /**
  * SimpleFuture
+ * 简单的 Future 实现
  */
 public class SimpleFuture implements ResponseFuture {
 
