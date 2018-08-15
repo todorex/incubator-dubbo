@@ -23,14 +23,15 @@ import java.io.IOException;
 
 /**
  * http invocation handler.
+ * HTTP 处理器接口
  */
 public interface HttpHandler {
 
     /**
      * invoke.
-     *
-     * @param request  request.
-     * @param response response.
+     * 处理器处理请求
+     * @param request  request. 请求
+     * @param response response. 响应
      * @throws IOException
      * @throws ServletException
      */

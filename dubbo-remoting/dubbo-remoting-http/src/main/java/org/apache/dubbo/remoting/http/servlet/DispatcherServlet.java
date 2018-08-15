@@ -32,8 +32,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 5766349180380479888L;
+    /**
+     * 处理器集合
+     *
+     * key：服务器端口
+     */
     private static final Map<Integer, HttpHandler> handlers = new ConcurrentHashMap<Integer, HttpHandler>();
+
+    /**
+     * 单例的
+     */
     private static DispatcherServlet INSTANCE;
+
 
     public DispatcherServlet() {
         DispatcherServlet.INSTANCE = this;
@@ -51,13 +61,22 @@ public class DispatcherServlet extends HttpServlet {
         return INSTANCE;
     }
 
+    /**
+     * 处理，和我们遇到的spring mvc 很像
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // 获得处理器
         HttpHandler handler = handlers.get(request.getLocalPort());
         if (handler == null) {// service not found.
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
         } else {
+            // 处理请求
             handler.handle(request, response);
         }
     }

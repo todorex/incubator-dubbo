@@ -34,7 +34,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.StdErrLog;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-
+/**
+ * 基于 Jetty 的 HTTP 服务器实现类
+ */
 public class JettyHttpServer extends AbstractHttpServer {
 
     private static final Logger logger = LoggerFactory.getLogger(JettyHttpServer.class);
@@ -43,6 +45,9 @@ public class JettyHttpServer extends AbstractHttpServer {
 
     private URL url;
 
+    /**
+     * 内嵌的 Jetty 服务器
+     */
     public JettyHttpServer(URL url, final HttpHandler handler) {
         super(url, handler);
         this.url = url;
@@ -51,14 +56,17 @@ public class JettyHttpServer extends AbstractHttpServer {
         Log.setLog(new StdErrLog());
         Log.getLog().setDebugEnabled(false);
 
+        // 注册 HttpHandler 到 DispatcherServlet 中
         DispatcherServlet.addHttpHandler(url.getParameter(Constants.BIND_PORT_KEY, url.getPort()), handler);
 
+        // 创建线程池
         int threads = url.getParameter(Constants.THREADS_KEY, Constants.DEFAULT_THREADS);
         QueuedThreadPool threadPool = new QueuedThreadPool();
         threadPool.setDaemon(true);
         threadPool.setMaxThreads(threads);
         threadPool.setMinThreads(threads);
 
+        // 创建内嵌的 Jetty 对象
         server = new Server(threadPool);
 
         ServerConnector connector = new ServerConnector(server);
@@ -72,6 +80,7 @@ public class JettyHttpServer extends AbstractHttpServer {
         server.addConnector(connector);
 
         ServletHandler servletHandler = new ServletHandler();
+        // 添加 DispatcherServlet 到 Jetty 中
         ServletHolder servletHolder = servletHandler.addServletWithMapping(DispatcherServlet.class, "/*");
         servletHolder.setInitOrder(2);
 
@@ -80,9 +89,11 @@ public class JettyHttpServer extends AbstractHttpServer {
         // TODO Context.SESSIONS is the best option here? (In jetty 9.x, it becomes ServletContextHandler.SESSIONS)
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
         context.setServletHandler(servletHandler);
+        // 添加 ServletContext 对象，到 ServletManager 中
         ServletManager.getInstance().addServletContext(url.getParameter(Constants.BIND_PORT_KEY, url.getPort()), context.getServletContext());
 
         try {
+            // 启动 Jetty
             server.start();
         } catch (Exception e) {
             throw new IllegalStateException("Failed to start jetty server on " + url.getParameter(Constants.BIND_IP_KEY) + ":" + url.getParameter(Constants.BIND_PORT_KEY) + ", cause: "

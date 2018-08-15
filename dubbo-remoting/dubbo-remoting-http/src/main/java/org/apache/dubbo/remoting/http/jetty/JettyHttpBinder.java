@@ -23,6 +23,7 @@ import org.apache.dubbo.remoting.http.HttpServer;
 
 /**
  * JettyHttpTransporter
+ * 基于 Tomcat 绑定器实现类
  */
 public class JettyHttpBinder implements HttpBinder {
 

@@ -21,10 +21,16 @@ import org.apache.dubbo.common.URL;
 import org.apache.dubbo.remoting.http.HttpHandler;
 import org.apache.dubbo.remoting.http.support.AbstractHttpServer;
 
+/**
+ * 基于 Servlet 的服务器实现类
+ *
+ * 需要配置 DispatcherServlet 到 web.xml 中。通过这样的方式，让外部的 Servlet 容器，可以进行转发
+ */
 public class ServletHttpServer extends AbstractHttpServer {
 
     public ServletHttpServer(URL url, HttpHandler handler) {
         super(url, handler);
+        // 注册 HttpHandler 到 DispatcherServlet 中
         DispatcherServlet.addHttpHandler(url.getParameter(Constants.BIND_PORT_KEY, 8080), handler);
     }
 

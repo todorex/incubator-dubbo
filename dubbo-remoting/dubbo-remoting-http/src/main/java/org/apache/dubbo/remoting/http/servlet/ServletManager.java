@@ -22,14 +22,24 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * TODO this may not be a pretty elegant solution,
+ * Servlet 管理器，负责管理 ServletContext
  *
  */
 public class ServletManager {
 
+    /**
+     * 外部服务器端口，用于 `servlet` 的服务器端口
+     */
     public static final int EXTERNAL_SERVER_PORT = -1234;
 
+    /**
+     * 单例
+     */
     private static final ServletManager instance = new ServletManager();
 
+    /**
+     * ServletContext 集合
+     */
     private final Map<Integer, ServletContext> contextMap = new ConcurrentHashMap<Integer, ServletContext>();
 
     public static ServletManager getInstance() {

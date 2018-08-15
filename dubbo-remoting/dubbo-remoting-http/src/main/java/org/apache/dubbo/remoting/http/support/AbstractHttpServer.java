@@ -24,11 +24,17 @@ import java.net.InetSocketAddress;
 
 /**
  * AbstractHttpServer
+ * HTTP 服务器抽象类
  */
 public abstract class AbstractHttpServer implements HttpServer {
-
+    /**
+     * URL 对象
+     */
     private final URL url;
 
+    /**
+     * 处理器
+     */
     private final HttpHandler handler;
 
     private volatile boolean closed;
