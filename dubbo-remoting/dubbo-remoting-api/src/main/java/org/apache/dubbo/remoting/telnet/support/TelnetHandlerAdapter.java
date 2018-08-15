@@ -23,15 +23,20 @@ import org.apache.dubbo.remoting.RemotingException;
 import org.apache.dubbo.remoting.telnet.TelnetHandler;
 import org.apache.dubbo.remoting.transport.ChannelHandlerAdapter;
 
+/**
+ * 分发给对应的 TelnetHandler 实现类，进行处理，返回命令结果
+ */
 public class TelnetHandlerAdapter extends ChannelHandlerAdapter implements TelnetHandler {
 
     private final ExtensionLoader<TelnetHandler> extensionLoader = ExtensionLoader.getExtensionLoader(TelnetHandler.class);
 
     @Override
     public String telnet(Channel channel, String message) throws RemotingException {
+        // 处理 telnet 提示键
         String prompt = channel.getUrl().getParameterAndDecoded(Constants.PROMPT_KEY, Constants.DEFAULT_PROMPT);
         boolean noprompt = message.contains("--no-prompt");
         message = message.replace("--no-prompt", "");
+        // 拆出 telnet 命令和参数
         StringBuilder buf = new StringBuilder();
         message = message.trim();
         String command;
