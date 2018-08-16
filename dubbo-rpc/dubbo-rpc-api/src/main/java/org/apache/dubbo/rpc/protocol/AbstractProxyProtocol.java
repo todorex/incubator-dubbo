@@ -32,6 +32,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * AbstractProxyProtocol
+ * Proxy 协议抽象类
+ * 为 HttpProtocol 、RestProtocol 等子类，提供公用的服务暴露、服务引用的公用方法
  */
 public abstract class AbstractProxyProtocol extends AbstractProtocol {
 
@@ -60,20 +62,32 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
         this.proxyFactory = proxyFactory;
     }
 
+    /**
+     * 暴露
+     * @param invoker 服务的执行体
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> Exporter<T> export(final Invoker<T> invoker) throws RpcException {
+        // 获得服务键
         final String uri = serviceKey(invoker.getUrl());
+        // 获得 Exporter 对象。若已经暴露，直接返回
         Exporter<T> exporter = (Exporter<T>) exporterMap.get(uri);
         if (exporter != null) {
             return exporter;
         }
+        // 执行暴露服务
         final Runnable runnable = doExport(proxyFactory.getProxy(invoker, true), invoker.getInterface(), invoker.getUrl());
+        // 创建 Exporter 对象
         exporter = new AbstractExporter<T>(invoker) {
             @Override
             public void unexport() {
                 super.unexport();
                 exporterMap.remove(uri);
+                // 执行取消暴露的回调
                 if (runnable != null) {
                     try {
                         runnable.run();
@@ -83,13 +97,24 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
                 }
             }
         };
+        // 添加到 Exporter 集合
         exporterMap.put(uri, exporter);
         return exporter;
     }
 
+    /**
+     * 引用
+     * @param type 服务的类型
+     * @param url  远程服务的URL地址
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     public <T> Invoker<T> refer(final Class<T> type, final URL url) throws RpcException {
+        // 执行引用服务
         final Invoker<T> target = proxyFactory.getInvoker(doRefer(type, url), type, url);
+        // 创建 Invoker 对象
         Invoker<T> invoker = new AbstractInvoker<T>(type, url) {
             @Override
             protected Result doInvoke(Invocation invocation) throws Throwable {
@@ -114,6 +139,7 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
                 }
             }
         };
+        // 添加到 Invoker 集合
         invokers.add(invoker);
         return invoker;
     }
@@ -137,8 +163,27 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
         return RpcException.UNKNOWN_EXCEPTION;
     }
 
+    /**
+     * 执行暴露，并返回取消暴露的回调 Runnable
+     *
+     * @param impl 服务 Proxy 对象
+     * @param type 服务接口
+     * @param url URL
+     * @param <T> 服务接口
+     * @return 消暴露的回调 Runnable
+     * @throws RpcException 当发生异常
+     */
     protected abstract <T> Runnable doExport(T impl, Class<T> type, URL url) throws RpcException;
 
+    /**
+     * 执行引用，并返回调用远程服务的 Service 对象
+     *
+     * @param type 服务接口
+     * @param url URL
+     * @param <T> 服务接口
+     * @return 调用远程服务的 Service 对象
+     * @throws RpcException 当发生异常
+     */
     protected abstract <T> T doRefer(Class<T> type, URL url) throws RpcException;
 
 }

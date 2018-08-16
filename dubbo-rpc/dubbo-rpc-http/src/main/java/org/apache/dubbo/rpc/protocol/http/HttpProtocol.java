@@ -46,15 +46,30 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * HttpProtocol
+ * http协议实现类
  */
 public class HttpProtocol extends AbstractProxyProtocol {
 
+    /**
+     * 默认服务器端口
+     */
     public static final int DEFAULT_PORT = 80;
-
+    /**
+     * Http 服务器集合
+     *
+     * key：ip:port
+     */
     private final Map<String, HttpServer> serverMap = new ConcurrentHashMap<String, HttpServer>();
 
+    /**
+     * Spring HttpInvokerServiceExporter 集合
+     *
+     * key：path 服务名
+     */
     private final Map<String, HttpInvokerServiceExporter> skeletonMap = new ConcurrentHashMap<String, HttpInvokerServiceExporter>();
-
+    /**
+     * HttpBinder$Adaptive 对象
+     */
     private HttpBinder httpBinder;
 
     public HttpProtocol() {
@@ -70,6 +85,15 @@ public class HttpProtocol extends AbstractProxyProtocol {
         return DEFAULT_PORT;
     }
 
+    /**
+     * 执行暴露服务
+     * @param impl 服务 Proxy 对象
+     * @param type 服务接口
+     * @param url URL
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     protected <T> Runnable doExport(final T impl, Class<T> type, URL url) throws RpcException {
         String addr = getAddr(url);
@@ -105,6 +129,14 @@ public class HttpProtocol extends AbstractProxyProtocol {
         return httpServiceExporter;
     }
 
+    /**
+     * 执行引用服务
+     * @param serviceType
+     * @param url URL
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected <T> T doRefer(final Class<T> serviceType, final URL url) throws RpcException {
