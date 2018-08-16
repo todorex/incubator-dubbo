@@ -28,20 +28,22 @@ import java.util.List;
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Directory_service">Directory Service</a>
  * 在软件工程中，一个目录是指一组名字和值的映射，保存一组Invoker
+ *
+ * 一个 Directory 只对应一个服务类型
  * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
  */
 public interface Directory<T> extends Node {
 
     /**
      * get service type.
-     *
+     * 获得服务类型
      * @return service type.
      */
     Class<T> getInterface();
 
     /**
      * list invokers.
-     *
+     * 获得所有服务 Invoker 集合
      * @return invokers
      */
     List<Invoker<T>> list(Invocation invocation) throws RpcException;
