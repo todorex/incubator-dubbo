@@ -40,18 +40,25 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ScriptRouter
- *
+ * 基于脚本的 Router 实现类
  */
 public class ScriptRouter implements Router {
 
     private static final Logger logger = LoggerFactory.getLogger(ScriptRouter.class);
 
+    /**
+     * 脚本类型 与 ScriptEngine 的映射缓存
+     */
     private static final Map<String, ScriptEngine> engines = new ConcurrentHashMap<String, ScriptEngine>();
 
     private final ScriptEngine engine;
-
+    /**
+     * 路由规则 URL
+     */
     private final int priority;
-
+    /**
+     * 路由规则内容
+     */
     private final String rule;
 
     private final URL url;

@@ -40,16 +40,32 @@ import java.util.regex.Pattern;
 
 /**
  * ConditionRouter
- *
+ * 基于条件表达式的 Router 实现类
+ * 如：host = 10.20.153.10 => host = 10.20.153.11
  */
 public class ConditionRouter implements Router, Comparable<Router> {
 
     private static final Logger logger = LoggerFactory.getLogger(ConditionRouter.class);
     private static Pattern ROUTE_PATTERN = Pattern.compile("([&!=,]*)\\s*([^&!=,\\s]+)");
+    /**
+     * 路由规则 URL
+     */
     private final URL url;
+    /**
+     * 路由规则的优先级，用于排序，优先级越大越靠前执行，可不填，缺省为 0
+     */
     private final int priority;
+    /**
+     * 当路由结果为空时，是否强制执行，如果不强制执行，路由结果为空的路由规则将自动失效，可不填，缺省为 false
+     */
     private final boolean force;
+    /**
+     * 消费者匹配条件集合，通过解析【条件表达式 rule 的 `=>` 之前半部分】
+     */
     private final Map<String, MatchPair> whenCondition;
+    /**
+     * 提供者地址列表的过滤条件，通过解析【条件表达式 rule 的 `=>` 之后半部分】
+     */
     private final Map<String, MatchPair> thenCondition;
 
     public ConditionRouter(URL url) {
@@ -229,6 +245,9 @@ public class ConditionRouter implements Router, Comparable<Router> {
         return result;
     }
 
+    /**
+     * 匹配的值组
+     */
     private static final class MatchPair {
         final Set<String> matches = new HashSet<String>();
         final Set<String> mismatches = new HashSet<String>();

@@ -29,11 +29,12 @@ import org.apache.dubbo.rpc.Invocation;
  * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
  * @see org.apache.dubbo.rpc.cluster.Directory#list(Invocation)
  */
-@SPI
+@SPI // Dubbo SPI 拓展点，无默认值
 public interface RouterFactory {
 
     /**
      * Create router.
+     * 创建 Router 对象
      *
      * @param url
      * @return router
