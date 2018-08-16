@@ -47,6 +47,7 @@ public class FailfastClusterInvoker<T> extends AbstractClusterInvoker<T> {
         try {
             return invoker.invoke(invocation);
         } catch (Throwable e) {
+            // 若是业务性质的异常，直接抛出
             if (e instanceof RpcException && ((RpcException) e).isBiz()) { // biz exception.
                 throw (RpcException) e;
             }
