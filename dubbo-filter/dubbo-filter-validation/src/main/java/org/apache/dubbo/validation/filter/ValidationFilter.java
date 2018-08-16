@@ -30,10 +30,15 @@ import org.apache.dubbo.validation.Validator;
 
 /**
  * ValidationFilter
+ * 参数验证过滤器
  */
 @Activate(group = {Constants.CONSUMER, Constants.PROVIDER}, value = Constants.VALIDATION_KEY, order = 10000)
 public class ValidationFilter implements Filter {
 
+    /**
+     *  Validation$Adaptive 对象
+     *  通过 Dubbo SPI 机制，调用 {@link #setValidation(Validation)} 方法，进行注入
+     */
     private Validation validation;
 
     public void setValidation(Validation validation) {

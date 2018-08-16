@@ -24,7 +24,7 @@ import org.apache.dubbo.common.extension.SPI;
 /**
  * Validation
  */
-@SPI("jvalidation")
+@SPI("jvalidation") //Dubbo SPI 拓展点，默认为 "jvalidation"
 public interface Validation {
 
     @Adaptive(Constants.VALIDATION_KEY)
