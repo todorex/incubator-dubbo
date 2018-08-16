@@ -28,6 +28,7 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * FutureAdapter
+ * 透明化 ResponseFuture 的存在
  */
 public class FutureAdapter<V> extends CompletableFuture<V> {
 

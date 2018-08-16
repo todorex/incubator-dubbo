@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 
 /**
  * EventFilter
+ * 事件通知过滤器
  */
 @Activate(group = Constants.CONSUMER)
 public class FutureFilter implements PostProcessFilter {
