@@ -37,6 +37,11 @@ import java.util.Set;
 /**
  * When invoke fails, log the initial error and retry other invokers (retry n times, which means at most n different invokers will be invoked)
  * Note that retry causes latency.
+ *
+ * FailoverCluster Invoker 实现类
+ *
+ * 失败自动切换，当出现失败，重试其它服务器。
+ * 通常用于读操作，但重试会带来更长延迟。可通过 retries="2" 来设置重试次数(不含第一次)。
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Failover">Failover</a>
  *
@@ -49,32 +54,49 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
         super(directory);
     }
 
+    /**
+     * 执行调用逻辑
+     * @param invocation
+     * @param invokers
+     * @param loadbalance
+     * @return
+     * @throws RpcException
+     */
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Result doInvoke(Invocation invocation, final List<Invoker<T>> invokers, LoadBalance loadbalance) throws RpcException {
         List<Invoker<T>> copyinvokers = invokers;
+        // 检查copyinvokers即可用Invoker集合是否为空，如果为空，那么抛出异常
         checkInvokers(copyinvokers, invocation);
+        // // 得到最大可调用次数：最大可重试次数+1，默认最大可重试次数Constants.DEFAULT_RETRIES=2
         int len = getUrl().getMethodParameter(invocation.getMethodName(), Constants.RETRIES_KEY, Constants.DEFAULT_RETRIES) + 1;
         if (len <= 0) {
             len = 1;
         }
         // retry loop.
+        // 保存最后一次调用的异常
         RpcException le = null; // last exception.
         List<Invoker<T>> invoked = new ArrayList<Invoker<T>>(copyinvokers.size()); // invoked invokers.
         Set<String> providers = new HashSet<String>(len);
         for (int i = 0; i < len; i++) {
             //Reselect before retry to avoid a change of candidate `invokers`.
             //NOTE: if `invokers` changed, then `invoked` also lose accuracy.
+            // failover机制核心实现：如果出现调用失败，那么重试其他服务器
             if (i > 0) {
                 checkWhetherDestroyed();
+                // 重试时，进行重新选择，避免重试时invoker列表已发生变化
                 copyinvokers = list(invocation);
                 // check again
                 checkInvokers(copyinvokers, invocation);
             }
+            // 根据负载均衡机制从copyinvokers中选择一个Invoker
             Invoker<T> invoker = select(loadbalance, invocation, copyinvokers, invoked);
+            // 保存每次调用的Invoker
             invoked.add(invoker);
+            // 设置已经调用的 Invoker 集合，到 Context 中
             RpcContext.getContext().setInvokers((List) invoked);
             try {
+                // RPC 调用得到 Result
                 Result result = invoker.invoke(invocation);
                 if (le != null && logger.isWarnEnabled()) {
                     logger.warn("Although retry the method " + invocation.getMethodName()
