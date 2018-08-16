@@ -46,11 +46,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * http rpc support.
+ * hessian:// 协议实现类
  */
 public class HessianProtocol extends AbstractProxyProtocol {
 
+    /**
+     * Http 服务器集合
+     *
+     * key：ip:port
+     */
     private final Map<String, HttpServer> serverMap = new ConcurrentHashMap<String, HttpServer>();
-
+    /**
+     * Spring HttpInvokerServiceExporter 集合
+     *
+     * key：path 服务名
+     *
+     * 请求处理过程为 HttpServer => DispatcherServlet => HessianHandler => HessianSkeleton
+     */
     private final Map<String, HessianSkeleton> skeletonMap = new ConcurrentHashMap<String, HessianSkeleton>();
 
     private HttpBinder httpBinder;
@@ -68,6 +80,15 @@ public class HessianProtocol extends AbstractProxyProtocol {
         return 80;
     }
 
+    /**
+     * 执行暴露服务
+     * @param impl 服务 Proxy 对象
+     * @param type 服务接口
+     * @param url URL
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     protected <T> Runnable doExport(T impl, Class<T> type, URL url) throws RpcException {
         String addr = getAddr(url);
@@ -92,6 +113,14 @@ public class HessianProtocol extends AbstractProxyProtocol {
         };
     }
 
+    /**
+     * 执行引用服务
+     * @param serviceType
+     * @param url URL
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected <T> T doRefer(Class<T> serviceType, URL url) throws RpcException {
@@ -101,7 +130,7 @@ public class HessianProtocol extends AbstractProxyProtocol {
             RpcContext.getContext().setAttachment(Constants.GENERIC_KEY, generic);
             url = url.setPath(url.getPath() + "/" + Constants.GENERIC_KEY);
         }
-
+        // 创建 HessianProxyFactory 对象
         HessianProxyFactory hessianProxyFactory = new HessianProxyFactory();
         boolean isHessian2Request = url.getParameter(Constants.HESSIAN2_REQUEST_KEY, Constants.DEFAULT_HESSIAN2_REQUEST);
         hessianProxyFactory.setHessian2Request(isHessian2Request);
@@ -120,6 +149,7 @@ public class HessianProtocol extends AbstractProxyProtocol {
         int timeout = url.getParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);
         hessianProxyFactory.setConnectTimeout(timeout);
         hessianProxyFactory.setReadTimeout(timeout);
+        // 创建 Service Proxy 对象
         return (T) hessianProxyFactory.create(serviceType, url.setProtocol("http").toJavaURL(), Thread.currentThread().getContextClassLoader());
     }
 
@@ -163,10 +193,13 @@ public class HessianProtocol extends AbstractProxyProtocol {
         public void handle(HttpServletRequest request, HttpServletResponse response)
                 throws IOException, ServletException {
             String uri = request.getRequestURI();
+            // 获得 HessianSkeleton 对象
             HessianSkeleton skeleton = skeletonMap.get(uri);
+            // 必须是 POST 请求
             if (!request.getMethod().equalsIgnoreCase("POST")) {
                 response.setStatus(500);
             } else {
+                // 执行调用
                 RpcContext.getContext().setRemoteAddress(request.getRemoteAddr(), request.getRemotePort());
 
                 Enumeration<String> enumeration = request.getHeaderNames();
