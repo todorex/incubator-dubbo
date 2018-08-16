@@ -29,12 +29,15 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Round robin load balance.
- *
+ * 轮循，按公约后的权重设置轮循比率
  */
 public class RoundRobinLoadBalance extends AbstractLoadBalance {
 
     public static final String NAME = "roundrobin";
 
+    /**
+     * 服务方法与计数器的映射
+     */
     private final ConcurrentMap<String, AtomicPositiveInteger> sequences = new ConcurrentHashMap<String, AtomicPositiveInteger>();
 
     @Override
@@ -59,6 +62,7 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
             sequences.putIfAbsent(key, new AtomicPositiveInteger());
             sequence = sequences.get(key);
         }
+        // 获得当前顺序号，并递增 + 1
         int currentSequence = sequence.getAndIncrement();
         if (maxWeight > 0 && minWeight < maxWeight) {
             int mod = currentSequence % weightSum;
@@ -77,6 +81,7 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
             }
         }
         // Round robin
+        // 权重相等，平均顺序获得
         return invokers.get(currentSequence % length);
     }
 

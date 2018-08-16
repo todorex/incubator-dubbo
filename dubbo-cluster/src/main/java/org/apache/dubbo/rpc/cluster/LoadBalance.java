@@ -28,16 +28,18 @@ import java.util.List;
 
 /**
  * LoadBalance. (SPI, Singleton, ThreadSafe)
+ * 负载均衡 接口
  * <p>
  * <a href="http://en.wikipedia.org/wiki/Load_balancing_(computing)">Load-Balancing</a>
  *
  * @see org.apache.dubbo.rpc.cluster.Cluster#join(Directory)
  */
-@SPI(RandomLoadBalance.NAME)
+@SPI(RandomLoadBalance.NAME) // Dubbo SPI 拓展点，默认为 "random" ，即随机
 public interface LoadBalance {
 
     /**
      * select one invoker in list.
+     * 从 Invoker 集合中，选择一个
      *
      * @param invokers   invokers.
      * @param url        refer url

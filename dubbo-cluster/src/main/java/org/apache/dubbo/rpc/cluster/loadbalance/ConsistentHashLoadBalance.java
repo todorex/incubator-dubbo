@@ -33,17 +33,22 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * ConsistentHashLoadBalance
- *
+ * 一致性 Hash，相同参数的请求总是发到同一提供者
+ * 当某一台提供者挂时，原本发往该提供者的请求，基于虚拟节点，平摊到其它提供者，不会引起剧烈变动
  */
 public class ConsistentHashLoadBalance extends AbstractLoadBalance {
     public static final String NAME = "consistenthash";
 
+    /**
+     * 服务方法与一致性哈希选择器的映射
+     */
     private final ConcurrentMap<String, ConsistentHashSelector<?>> selectors = new ConcurrentHashMap<String, ConsistentHashSelector<?>>();
 
     @SuppressWarnings("unchecked")
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         String methodName = RpcUtils.getMethodName(invocation);
+        // 基于 invokers 集合，根据对象内存地址来计算定义哈希值
         String key = invokers.get(0).getUrl().getServiceKey() + "." + methodName;
         int identityHashCode = System.identityHashCode(invokers);
         ConsistentHashSelector<T> selector = (ConsistentHashSelector<T>) selectors.get(key);
@@ -54,6 +59,11 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
         return selector.select(invocation);
     }
 
+    /**
+     * 一致性哈希选择器，基于 Ketama 算法
+     * http://langyu.iteye.com/blog/684087
+     * @param <T>
+     */
     private static final class ConsistentHashSelector<T> {
 
         private final TreeMap<Long, Invoker<T>> virtualInvokers;
@@ -87,8 +97,11 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
         }
 
         public Invoker<T> select(Invocation invocation) {
+            // 基于方法参数，获得 KEY
             String key = toKey(invocation.getArguments());
+            // 计算 MD5 值
             byte[] digest = md5(key);
+            // 计算 KEY 值
             return selectForKey(hash(digest, 0));
         }
 

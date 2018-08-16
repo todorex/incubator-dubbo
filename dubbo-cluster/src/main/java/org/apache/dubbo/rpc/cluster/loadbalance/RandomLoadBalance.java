@@ -25,7 +25,7 @@ import java.util.Random;
 
 /**
  * random load balance.
- *
+ * 随机，按权重设置随机概率
  */
 public class RandomLoadBalance extends AbstractLoadBalance {
 
@@ -46,6 +46,7 @@ public class RandomLoadBalance extends AbstractLoadBalance {
                 sameWeight = false;
             }
         }
+        // 权重不相等，随机后，判断在哪个 Invoker 的权重区间中
         if (totalWeight > 0 && !sameWeight) {
             // If (not every invoker has the same weight & at least one invoker's weight>0), select randomly based on totalWeight.
             int offset = random.nextInt(totalWeight);
@@ -57,6 +58,7 @@ public class RandomLoadBalance extends AbstractLoadBalance {
                 }
             }
         }
+        // 权重相等，平均随机
         // If all invokers have the same weight value or totalWeight=0, return evenly.
         return invokers.get(random.nextInt(length));
     }
