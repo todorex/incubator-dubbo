@@ -24,7 +24,7 @@ import org.apache.dubbo.rpc.Invocation;
 /**
  * CacheFactory
  */
-@SPI("lru")
+@SPI("lru") //SPI扩展
 public interface CacheFactory {
 
     @Adaptive("cache")

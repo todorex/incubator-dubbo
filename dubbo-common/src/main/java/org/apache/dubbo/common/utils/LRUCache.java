@@ -20,6 +20,11 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * LRU 缓存实现类
+ * @param <K>
+ * @param <V>
+ */
 public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
     private static final long serialVersionUID = -5167631809472116969L;
@@ -35,10 +40,16 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     }
 
     public LRUCache(int maxCapacity) {
+        // 设置 LRUCache 为按访问顺序(调用get方法)的链表
         super(16, DEFAULT_LOAD_FACTOR, true);
         this.maxCapacity = maxCapacity;
     }
 
+    /**
+     * 指定插入元素时移除最老的元素
+     * @param eldest
+     * @return
+     */
     @Override
     protected boolean removeEldestEntry(java.util.Map.Entry<K, V> eldest) {
         return size() > maxCapacity;

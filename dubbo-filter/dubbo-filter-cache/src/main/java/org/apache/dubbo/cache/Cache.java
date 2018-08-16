@@ -18,6 +18,7 @@ package org.apache.dubbo.cache;
 
 /**
  * Cache
+ * 缓存容器接口
  */
 public interface Cache {
 

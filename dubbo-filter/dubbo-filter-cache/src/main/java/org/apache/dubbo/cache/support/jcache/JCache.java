@@ -31,12 +31,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * JCache
+ * 与 JSR107 集成，可以桥接各种缓存实现
  */
 public class JCache implements org.apache.dubbo.cache.Cache {
 
     private final Cache<Object, Object> store;
 
     public JCache(URL url) {
+        // 获得 Cache Key
         String method = url.getParameter(Constants.METHOD_KEY, "");
         String key = url.getAddress() + "." + url.getServiceKey() + "." + method;
         // jcache parameter is the full-qualified class name of SPI implementation

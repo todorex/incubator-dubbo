@@ -29,6 +29,7 @@ import org.apache.dubbo.rpc.filter.tps.TPSLimiter;
 
 /**
  * Limit TPS for either service or service's particular method
+ * 限流过滤器
  */
 @Activate(group = Constants.PROVIDER, value = Constants.TPS_LIMIT_RATE_KEY)
 public class TpsLimitFilter implements Filter {
