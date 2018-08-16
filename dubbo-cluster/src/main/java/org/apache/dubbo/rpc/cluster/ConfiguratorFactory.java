@@ -24,7 +24,7 @@ import org.apache.dubbo.common.extension.SPI;
  * ConfiguratorFactory. (SPI, Singleton, ThreadSafe)
  *
  */
-@SPI
+@SPI // Dubbo SPI 拓展点，无默认值
 public interface ConfiguratorFactory {
 
     /**

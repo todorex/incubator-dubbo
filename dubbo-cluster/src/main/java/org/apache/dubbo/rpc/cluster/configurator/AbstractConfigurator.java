@@ -27,10 +27,13 @@ import java.util.Set;
 
 /**
  * AbstractOverrideConfigurator
- *
+ * 实现公用的配置规则的匹配、排序的逻辑
  */
 public abstract class AbstractConfigurator implements Configurator {
 
+    /**
+     * 配置规则 URL
+     */
     private final URL configuratorUrl;
 
     public AbstractConfigurator(URL url) {
@@ -52,6 +55,7 @@ public abstract class AbstractConfigurator implements Configurator {
             return url;
         }
         // If override url has port, means it is a provider address. We want to control a specific provider with this override url, it may take effect on the specific provider instance or on consumers holding this provider instance.
+        // 配置规则，URL 带有端口( port )，意图是控制提供者机器。可以在提供端生效 也可以在消费端生效
         if (configuratorUrl.getPort() != 0) {
             if (url.getPort() == configuratorUrl.getPort()) {
                 return configureIfMatch(url.getHost(), url);
