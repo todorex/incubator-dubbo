@@ -27,12 +27,22 @@ import org.apache.dubbo.rpc.cluster.Directory;
  */
 public class MockClusterWrapper implements Cluster {
 
+    /**
+     * 真正的 Cluster 对象
+     */
     private Cluster cluster;
 
     public MockClusterWrapper(Cluster cluster) {
         this.cluster = cluster;
     }
 
+    /**
+     * 创建真正的 Cluster Invoker 对象
+     * @param directory
+     * @param <T>
+     * @return
+     * @throws RpcException
+     */
     @Override
     public <T> Invoker<T> join(Directory<T> directory) throws RpcException {
         return new MockClusterInvoker<T>(directory,

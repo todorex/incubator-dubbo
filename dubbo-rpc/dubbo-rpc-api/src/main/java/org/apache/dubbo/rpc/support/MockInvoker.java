@@ -38,9 +38,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Mock Invoker 实现类
+ * @param <T>
+ */
 final public class MockInvoker<T> implements Invoker<T> {
     private final static ProxyFactory proxyFactory = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();
+    /**
+     * mock 与 Invoker 对象的映射缓存
+     *
+     * @see #getInvoker(String)
+     */
     private final static Map<String, Invoker<?>> mocks = new ConcurrentHashMap<String, Invoker<?>>();
+
     private final static Map<String, Throwable> throwables = new ConcurrentHashMap<String, Throwable>();
 
     private final URL url;
@@ -83,12 +93,19 @@ final public class MockInvoker<T> implements Invoker<T> {
         return value;
     }
 
+    /**
+     * 执行 Mock 逻辑
+     * @param invocation
+     * @return
+     * @throws RpcException
+     */
     @Override
     public Result invoke(Invocation invocation) throws RpcException {
         String mock = getUrl().getParameter(invocation.getMethodName() + "." + Constants.MOCK_KEY);
         if (invocation instanceof RpcInvocation) {
             ((RpcInvocation) invocation).setInvoker(this);
         }
+        // 获得 `"mock"` 配置项，方法级 > 类级
         if (StringUtils.isBlank(mock)) {
             mock = getUrl().getParameter(Constants.MOCK_KEY);
         }
@@ -96,17 +113,21 @@ final public class MockInvoker<T> implements Invoker<T> {
         if (StringUtils.isBlank(mock)) {
             throw new RpcException(new IllegalAccessException("mock can not be null. url :" + url));
         }
+        // 标准化 `"mock"` 配置项
         mock = normallizeMock(URL.decode(mock));
         if (Constants.RETURN_PREFIX.trim().equalsIgnoreCase(mock.trim())) {
             RpcResult result = new RpcResult();
             result.setValue(null);
             return result;
+            // 以 "return " 开头，返回对应值的 RpcResult 对象
         } else if (mock.startsWith(Constants.RETURN_PREFIX)) {
             mock = mock.substring(Constants.RETURN_PREFIX.length()).trim();
             mock = mock.replace('`', '"');
             try {
+                // 解析返回类型
                 Type[] returnTypes = RpcUtils.getReturnTypes(invocation);
                 Object value = parseMockValue(mock, returnTypes);
+                // 创建对应值的 RpcResult 对象，并返回
                 return new RpcResult(value);
             } catch (Exception ew) {
                 throw new RpcException("mock return invoke error. method :" + invocation.getMethodName() + ", mock:" + mock + ", url: " + url, ew);

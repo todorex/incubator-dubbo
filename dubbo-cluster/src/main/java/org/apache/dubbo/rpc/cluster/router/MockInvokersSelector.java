@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * A specific Router designed to realize mock feature.
  * If a request is configured to use mock, then this router guarantees that only the invokers with protocol MOCK appear in final the invoker list, all other invokers will be excluded.
- *
+ * MockInvoker 路由选择器实现类
  */
 public class MockInvokersSelector implements Router {
 
@@ -49,6 +49,12 @@ public class MockInvokersSelector implements Router {
         return invokers;
     }
 
+    /**
+     * 获得普通 Invoker 集合
+     * @param invokers
+     * @param <T>
+     * @return
+     */
     private <T> List<Invoker<T>> getMockedInvokers(final List<Invoker<T>> invokers) {
         if (!hasMockProviders(invokers)) {
             return null;
@@ -61,7 +67,12 @@ public class MockInvokersSelector implements Router {
         }
         return sInvokers;
     }
-
+    /**
+     * 获得 Mock Invoker 集合
+     * @param invokers
+     * @param <T>
+     * @return
+     */
     private <T> List<Invoker<T>> getNormalInvokers(final List<Invoker<T>> invokers) {
         if (!hasMockProviders(invokers)) {
             return invokers;
