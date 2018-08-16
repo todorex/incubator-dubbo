@@ -18,6 +18,9 @@ package org.apache.dubbo.rpc.protocol.rest;
 
 import org.apache.dubbo.common.URL;
 
+/**
+ * Rest Server 接口
+ */
 public interface RestServer {
 
     void start(URL url);

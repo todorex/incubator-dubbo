@@ -22,8 +22,15 @@ import org.apache.dubbo.common.utils.StringUtils;
 
 import org.jboss.resteasy.spi.ResteasyDeployment;
 
+/**
+ * Rest Server 抽象基类
+ */
 public abstract class BaseRestServer implements RestServer {
 
+    /**
+     * 启动服务器
+     * @param url
+     */
     @Override
     public void start(URL url) {
         getDeployment().getMediaTypeMappings().put("json", "application/json");
