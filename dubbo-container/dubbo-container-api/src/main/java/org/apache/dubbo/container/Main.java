@@ -40,7 +40,9 @@ public class Main {
     public static final String SHUTDOWN_HOOK_KEY = "dubbo.shutdown.hook";
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-
+    /**
+     * Container 拓展点对应的 ExtensionLoader 对象
+     */
     private static final ExtensionLoader<Container> loader = ExtensionLoader.getExtensionLoader(Container.class);
 
     private static final ReentrantLock LOCK = new ReentrantLock();
@@ -49,11 +51,12 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            // 若 main 函数参数传入为空，从配置中加载
             if (args == null || args.length == 0) {
                 String config = ConfigUtils.getProperty(CONTAINER_KEY, loader.getDefaultExtensionName());
                 args = Constants.COMMA_SPLIT_PATTERN.split(config);
             }
-
+            // 加载容器数组
             final List<Container> containers = new ArrayList<Container>();
             for (int i = 0; i < args.length; i++) {
                 containers.add(loader.getExtension(args[i]));
@@ -81,7 +84,7 @@ public class Main {
                     }
                 });
             }
-
+            // 启动容器
             for (Container container : containers) {
                 container.start();
                 logger.info("Dubbo " + container.getClass().getSimpleName() + " started!");
